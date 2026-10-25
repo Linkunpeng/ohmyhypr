@@ -1,0 +1,22 @@
+# Copy to ~/.config/ohmyhypr/config.toml. Every key is optional;
+# defaults live in brain/src/ohmyhypr/config.py.
+
+[router]
+default = "local"        # "local" | "cloud"
+cloud_context = false    # attach desktop context when routing to Claude?
+
+[local]
+base_url = "http://127.0.0.1:8080/v1"
+chat_model = "llm-smart"
+vision_model = "vlm-default"
+asr_model = "asr-default"
+tts_model = "tts-default"
+
+[gpu_keeper]
+url = "http://127.0.0.1:6101"
+wait_timeout = 10        # seconds; interactive use should fail fast
+ttl = 120
+required = false         # refuse to run unmanaged when the keeper is down
+
+[cloud]
+command = ["claude", "-p"]

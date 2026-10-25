@@ -1,0 +1,28 @@
+[project]
+name = "ohmyhypr"
+version = "0.1.0"
+description = "Brain of the ohmyhypr AI native desktop: context, model routing, desktop tools"
+license = "MIT"
+requires-python = ">=3.12"
+dependencies = []
+
+[project.scripts]
+omh = "ohmyhypr.cli:main"
+
+[dependency-groups]
+dev = ["ruff>=0.6", "pytest>=8"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.uv]
+# `uv run omh` stays offline-capable; tooling via `uv run --group dev ...`.
+default-groups = []

@@ -1,0 +1,13 @@
+# machine-local overrides
+hypr/lua/omh/local.lua
+
+# python
+__pycache__/
+*.pyc
+.venv/
+.ruff_cache/
+.pytest_cache/
+
+# editor / os
+.DS_Store
+*.swp
