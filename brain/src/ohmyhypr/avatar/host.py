@@ -183,6 +183,16 @@ class AvatarHost:
         GtkLayerShell.set_margin(self.window, GtkLayerShell.Edge.RIGHT, int(self.margins["right"]))
         GtkLayerShell.set_margin(self.window, GtkLayerShell.Edge.BOTTOM, int(self.margins["bottom"]))
 
+    def _max_margins(self) -> tuple[int, int]:
+        """Largest margins that keep the window on its monitor (layer surfaces are clipped at the edge)."""
+        gdk_window = self.window.get_window()
+        monitor = gdk_window and self.window.get_display().get_monitor_at_window(gdk_window)
+        if not monitor:
+            return sys.maxsize, sys.maxsize
+        geo = monitor.get_geometry()
+        width, height = self.window.get_size()
+        return max(0, geo.width - width), max(0, geo.height - height)
+
     def _set_region(self, rects: list[dict[str, int]]) -> None:
         region = cairo.Region([cairo.RectangleInt(r["x"], r["y"], max(1, r["w"]), max(1, r["h"])) for r in rects])
         self.window.input_shape_combine_region(region)
@@ -229,8 +239,9 @@ class AvatarHost:
         elif kind == "drag":
             if self.drag_origin is None:
                 self.drag_origin = dict(self.margins)
-            self.margins["right"] = max(0, self.drag_origin["right"] - int(msg["dx"]))
-            self.margins["bottom"] = max(0, self.drag_origin["bottom"] - int(msg["dy"]))
+            max_right, max_bottom = self._max_margins()
+            self.margins["right"] = min(max_right, max(0, self.drag_origin["right"] - int(msg["dx"])))
+            self.margins["bottom"] = min(max_bottom, max(0, self.drag_origin["bottom"] - int(msg["dy"])))
             self._apply_margins()
         elif kind == "drag_end":
             self.drag_origin = None

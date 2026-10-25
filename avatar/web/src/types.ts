@@ -20,6 +20,15 @@ export interface Manifest {
     lines: Record<string, string[]>;
 }
 
+// World-space extent of the model; zNear is the z closest to the camera.
+export interface Bounds {
+    x0: number;
+    x1: number;
+    y0: number;
+    y1: number;
+    zNear: number;
+}
+
 export type Expression =
     | "blink"
     | "smile"

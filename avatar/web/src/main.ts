@@ -46,6 +46,7 @@ async function main(): Promise<void> {
         post({ type: "region", rects: rects.map((r) => ({ x: Math.floor(r.x), y: Math.floor(r.y), w: Math.ceil(r.w), h: Math.ceil(r.h) })) });
     };
     let lastRegion = "";
+    stage.scene.onBeforeRenderObservable.add(() => stage.fit(avatar.bounds()));
     stage.scene.onAfterRenderObservable.add(() => {
         if (avatar.headPosition(head)) {
             const p = stage.project(head);
@@ -113,11 +114,9 @@ async function main(): Promise<void> {
         },
         drag: (dx, dy) => post({ type: "drag", dx, dy }),
         dragEnd: () => post({ type: "drag_end" }),
+        rotate: (dx) => avatar.spinBy(-dx * 0.012),
         hover: (x) => avatar.lookAt((x / window.innerWidth) * 2 - 1),
-        wheel(delta) {
-            stage.zoomBy(delta > 0 ? 1.08 : 1 / 1.08);
-            measureBody();
-        },
+        wheel: (delta) => stage.zoomBy(delta > 0 ? 1.08 : 1 / 1.08),
     });
     document.addEventListener("pointerdown", (e) => {
         if (!ui.menu.contains(e.target as Node)) ui.menu.hidden = true;

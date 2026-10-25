@@ -9,9 +9,10 @@
 | 单击 | 微笑 + 轻跳 + 台词（`lines.click`） |
 | 1.5 秒内连点 3 次 | 生气（`lines.poke`） |
 | 双击 / `Super+Shift+Y` | 打开对话输入框：本地 LLM 以角色人设流式回答，等待时播放 `thinking` 表情 |
-| 拖动 | 移动位置（会被记住） |
-| 滚轮 | 缩放 |
-| 右键 | 菜单：聊天 / 换姿势 / 动作（如跳舞）/ 重新加载 / 隐藏 |
+| 拖动 | 移动位置（会被记住，不会拖出显示器） |
+| 右键拖动 | 左右旋转角色 |
+| 滚轮 | 缩放（放大到窗口装不下为止） |
+| 右键单击 | 菜单：聊天 / 换姿势 / 动作（如跳舞）/ 重新加载 / 隐藏 |
 | 鼠标悬停 | 身体转向指针 |
 | `Super+Y` | 显示 / 隐藏 |
 
@@ -72,7 +73,8 @@ host  brain/src/ohmyhypr/avatar/host.py   (系统 python：GTK3 + gtk-layer-shel
 renderer  avatar/web/src  (TypeScript + Babylon.js 9 + babylon-mmd 1.3，esbuild 打包)
   ├─ MmdWasmRuntime + 单线程 bullet 物理（file:// 页面拿不到 SharedArrayBuffer，用不了多线程）
   ├─ 动作导演：MmdCompositeAnimation 的 span 交叉淡入淡出（待机姿势 ⇄ 动作）
-  └─ 程序化表现：眨眼、说话口型、表情、转向指针、点击轻跳
+  ├─ 程序化表现：眨眼、说话口型、表情、转向指针、点击轻跳
+  └─ 自动取景：窗口大小固定，每帧按骨骼包围盒平移相机，装不下时拉远（跳舞时不会被裁切）
 ```
 
 为什么不用 Quickshell 内嵌 WebEngine：Quickshell 0.3 加载 QtWebEngine 时会崩溃

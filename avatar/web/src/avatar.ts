@@ -26,7 +26,7 @@ import type { MmdWasmModel } from "babylon-mmd/esm/Runtime/Optimized/mmdWasmMode
 import { MmdWasmRuntime } from "babylon-mmd/esm/Runtime/Optimized/mmdWasmRuntime";
 import { MmdWasmPhysics } from "babylon-mmd/esm/Runtime/Optimized/Physics/mmdWasmPhysics";
 
-import type { Expression, Manifest } from "./types";
+import type { Bounds, Expression, Manifest } from "./types";
 
 // Common morph names in MMD models, tried in order when the manifest omits one.
 const MORPH_CANDIDATES: Record<Expression, string[]> = {
@@ -49,6 +49,9 @@ const MOODS: Expression[] = ["smile", "angry", "sad", "surprise", "wink"];
 const FPS = 30; // MMD frame rate
 const FADE = 12; // crossfade length in frames
 const FOREVER = 30 * 60 * 60 * 24 * 7;
+// Padding (MMD units) from the skeleton out to the mesh: hair above the head
+// bone, fingers and skirt at the sides.
+const PAD = { side: 1.5, top: 2.5, bottom: 0.5 };
 
 type Animation = MmdAnimation;
 
@@ -75,7 +78,9 @@ export class Avatar {
     private expressionUntil = 0;
     private yaw = 0;
     private yawTarget = 0;
+    private spin = 0; // user rotation (right-drag), on top of turning to the pointer
     private hop = 0;
+    private scratch = new Vector3();
 
     private constructor(
         readonly scene: Scene,
@@ -263,6 +268,10 @@ export class Avatar {
         this.yawTarget = Math.max(-1, Math.min(1, nx)) * 0.35;
     }
 
+    spinBy(radians: number): void {
+        this.spin = (this.spin + radians) % (Math.PI * 2);
+    }
+
     private setTarget(expr: Expression, weight: number): void {
         for (const morph of this.morphs.get(expr) ?? []) this.targets.set(morph, weight);
     }
@@ -319,11 +328,31 @@ export class Avatar {
 
         // turn toward the pointer, hop on click
         this.yaw += (this.yawTarget - this.yaw) * Math.min(1, dt * 3);
-        Quaternion.FromEulerAnglesToRef(0, this.yaw, 0, this.mesh.rotationQuaternion!);
+        Quaternion.FromEulerAnglesToRef(0, this.spin + this.yaw, 0, this.mesh.rotationQuaternion!);
         if (this.hop > 0) {
             this.hop = Math.max(0, this.hop - dt * 2.5);
             this.mesh.position.y = Math.sin((1 - this.hop) * Math.PI) * 0.8;
         }
+    }
+
+    // World-space extent of the posed skeleton, padded out to the mesh.
+    bounds(): Bounds | null {
+        if (!this.model || !this.mesh) return null;
+        const world = this.mesh.getWorldMatrix();
+        const p = this.scratch;
+        const b = { x0: Infinity, x1: -Infinity, y0: Infinity, y1: -Infinity, zNear: Infinity };
+        for (const bone of this.model.runtimeBones) {
+            bone.getWorldTranslationToRef(p);
+            Vector3.TransformCoordinatesToRef(p, world, p);
+            b.x0 = Math.min(b.x0, p.x); b.x1 = Math.max(b.x1, p.x);
+            b.y0 = Math.min(b.y0, p.y); b.y1 = Math.max(b.y1, p.y);
+            b.zNear = Math.min(b.zNear, p.z);
+        }
+        if (!Number.isFinite(b.x0)) return null;
+        b.x0 -= PAD.side; b.x1 += PAD.side;
+        b.y0 -= PAD.bottom; b.y1 += PAD.top;
+        b.zNear -= PAD.side;
+        return b;
     }
 
     headPosition(out: Vector3): Vector3 | null {
