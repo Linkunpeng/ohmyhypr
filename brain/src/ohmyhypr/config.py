@@ -37,6 +37,10 @@ DEFAULTS: dict[str, Any] = {
     "cloud": {
         "command": ["claude", "-p"],
     },
+    "avatar": {
+        # Used when no theme is applied; themes choose their own pack.
+        "pack": "sandrone",
+    },
 }
 
 

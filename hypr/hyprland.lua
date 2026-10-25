@@ -10,6 +10,8 @@
 ---@module 'hl'
 
 local ROOT = debug.getinfo(1, "S").source:sub(2):match("(.*/)")
+-- Marks this session as ohmyhypr (`omh theme apply` checks it via `hyprctl repl`).
+OHMYHYPR_ROOT = ROOT
 package.path = ROOT .. "lua/?.lua;" .. ROOT .. "lua/?/init.lua;" .. package.path
 
 local s = require("omh.settings")(ROOT)

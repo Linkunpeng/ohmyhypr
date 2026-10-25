@@ -5,7 +5,7 @@ import "../services"
 Rectangle {
     implicitWidth: label.implicitWidth + 20
     implicitHeight: 24
-    radius: 12
+    radius: Theme.widgetCorner(height)
     gradient: Gradient {
         orientation: Gradient.Horizontal
         GradientStop { position: 0; color: Theme.accent }

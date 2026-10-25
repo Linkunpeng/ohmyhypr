@@ -1,0 +1,48 @@
+# 木偶 · Marionette — brass, crimson and ink; sharp mechanical edges.
+
+[meta]
+name = "木偶 Marionette"
+description = "黄铜与绯红的精密机关；直角控件，贴边状态栏，桑多涅陪伴"
+dark = true
+
+[wallpaper]
+# Not shipped (model art is not redistributable); missing → palette gradient.
+path = "~/3dModel/桑多涅/立绘.png"
+fit = "cover"
+
+[palette]
+bg = "#16121c"
+surface = "#241d2b"
+fg = "#ead9c0"
+muted = "#8c7d6b"
+accent = "#c9a25c"
+accent_alt = "#a3283a"
+urgent = "#e05a4f"
+border_active = "accent"
+border_inactive = "#3b3040"
+opacity = 0.86
+
+[shape]
+radius = 4
+border = 2
+gaps_in = 4
+gaps_out = 8
+bar = "docked"
+bar_position = "top"
+bar_height = 32
+widget = "square"
+
+[font]
+ui = "Noto Serif CJK SC"
+mono = "JetBrainsMono Nerd Font"
+size = 13
+
+[effects]
+blur = true
+shadow = true
+dim_inactive = true
+animation = "snappy"
+
+[avatar]
+enabled = true
+pack = "sandrone"

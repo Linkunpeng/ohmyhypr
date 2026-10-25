@@ -6,7 +6,8 @@ import argparse
 import json
 import sys
 
-from . import config, context, doctor, gpu_keeper, providers
+from . import config, context, doctor, gpu_keeper, providers, theme
+from .avatar import cli as avatar_cli
 
 SYSTEM_PROMPT = """You are the assistant built into the user's Hyprland desktop (ohmyhypr).
 Answer concisely in the user's language. Markdown is rendered.
@@ -46,6 +47,33 @@ def cmd_ask(args: argparse.Namespace, cfg: dict) -> int:
     return 0
 
 
+def cmd_theme(args: argparse.Namespace) -> int:
+    try:
+        if args.theme_cmd == "list":
+            items = theme.summary()
+            if args.json:
+                print(json.dumps(items, ensure_ascii=False))
+            else:
+                for t in items:
+                    mark = "*" if t.get("current") else " "
+                    print(f"{mark} {t['id']:<14} {t.get('name', '')}  {t.get('error', t.get('description', ''))}")
+            return 0
+        if args.theme_cmd == "current":
+            print((theme.current() or {}).get("id", ""))
+            return 0
+        target = args.id if args.theme_cmd == "apply" else None
+        if target is None:
+            ids = theme.available()
+            cur = (theme.current() or {}).get("id")
+            target = ids[(ids.index(cur) + 1) % len(ids)] if cur in ids else ids[0]
+        report = theme.apply(target)
+        print(json.dumps(report, ensure_ascii=False))
+        return 0
+    except theme.ThemeError as e:
+        print(f"omh: {e}", file=sys.stderr)
+        return 1
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="omh", description="ohmyhypr — AI native desktop")
     sub = parser.add_subparsers(dest="cmd", required=True)
@@ -63,6 +91,15 @@ def main(argv: list[str] | None = None) -> int:
     p_ask.add_argument("--no-context", action="store_true", help="do not attach desktop context")
     p_ask.add_argument("--dry-run", action="store_true", help="print the request instead of sending")
 
+    avatar_cli.register(sub)
+
+    p_theme = sub.add_parser("theme", help="list / apply desktop themes")
+    th = p_theme.add_subparsers(dest="theme_cmd", required=True)
+    th.add_parser("list", help="available themes").add_argument("--json", action="store_true")
+    th.add_parser("apply", help="switch everything to a theme").add_argument("id")
+    th.add_parser("current", help="print the applied theme id")
+    th.add_parser("next", help="cycle to the next theme")
+
     args = parser.parse_args(argv)
     cfg = config.load()
 
@@ -73,6 +110,10 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if args.cmd == "ask":
         return cmd_ask(args, cfg)
+    if args.cmd == "avatar":
+        return avatar_cli.run(args)
+    if args.cmd == "theme":
+        return cmd_theme(args)
     return 1
 
 

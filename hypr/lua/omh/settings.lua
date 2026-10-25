@@ -21,6 +21,17 @@ local function file_exists(path)
 	return false
 end
 
+-- Theme state written by `omh theme apply` (palette, shape, effects).
+local function load_theme()
+	local state = os.getenv("XDG_STATE_HOME") or (os.getenv("HOME") .. "/.local/state")
+	local path = state .. "/ohmyhypr/theme.lua"
+	if not file_exists(path) then
+		return nil
+	end
+	local ok, theme = pcall(dofile, path)
+	return ok and theme or nil
+end
+
 return function(root)
 	local repo = root:gsub("hypr/$", "")
 
@@ -35,20 +46,36 @@ return function(root)
 		browser = "google-chrome-stable",
 		-- Fallback launcher while the Quickshell omnibox is not running.
 		launcher = "rofi -show drun",
-		-- ohmyhypr CLI (brain). `uv tool install -e brain` puts it on PATH.
-		omh = "omh",
+		-- ohmyhypr CLI, run straight from this checkout.
+		omh = repo .. "bin/omh",
+		-- Applied on first start when no theme has been chosen yet.
+		default_theme = "sandrone",
+		avatar = true,
 
 		-- Monitors used when local.lua does not define any.
 		monitors = {
 			{ output = "", mode = "preferred", position = "auto", scale = 1 },
 		},
 
-		palette = {
-			accent = "rgb(8aadf4)",
-			accent_alt = "rgb(c6a0f6)",
-			inactive = "rgba(494d6488)",
+		-- Fallback look; `omh theme apply <id>` overrides it via theme.lua.
+		theme = {
+			id = "builtin",
+			palette = {
+				accent = "rgba(8aadf4ff)",
+				accent_alt = "rgba(c6a0f6ff)",
+				border_active = "rgba(8aadf4ff)",
+				border_inactive = "rgba(494d6488)",
+				shadow = "rgba(181926ff)",
+			},
+			shape = { radius = 12, border = 2, gaps_in = 5, gaps_out = 10 },
+			effects = { blur = true, shadow = true, dim_inactive = false, animation = "smooth" },
 		},
 	}
+
+	local theme = load_theme()
+	if theme then
+		merge(s.theme, theme)
+	end
 
 	local local_file = root .. "lua/omh/local.lua"
 	if file_exists(local_file) then

@@ -20,7 +20,16 @@ BINARIES = {
     "wtype": False,
     "notify-send": False,
     "claude": False,
+    "npm": False,
 }
+
+# Avatar host runs under the system python (PyGObject); probe it there.
+AVATAR_PROBE = """
+import gi
+gi.require_version('Gtk', '3.0'); gi.require_version('WebKit2', '4.1'); gi.require_version('GtkLayerShell', '0.1')
+from gi.repository import Gtk, WebKit2, GtkLayerShell
+import cairo
+"""
 
 
 def _http_ok(url: str) -> bool:
@@ -50,6 +59,15 @@ def run(cfg: dict[str, Any]) -> int:
     ]:
         mark = OK if _http_ok(url) else WARN
         print(f" {mark} {label:<12} {url}")
+
+    from . import paths
+
+    probe = subprocess.run(["/usr/bin/python3", "-c", AVATAR_PROBE], capture_output=True, text=True)
+    mark = OK if probe.returncode == 0 else WARN
+    detail = "gtk3 + webkit2gtk-4.1 + gtk-layer-shell + pycairo" if probe.returncode == 0 else probe.stderr.strip().splitlines()[-1:]
+    print(f" {mark} {'avatar host':<12} {detail}")
+    built = (paths.REPO / "avatar" / "dist" / "main.js").is_file()
+    print(f" {OK if built else WARN} {'avatar build':<12} {'avatar/dist' if built else 'not built (make avatar)'}")
 
     print()
     print("all required dependencies present" if not failed else f"{failed} required missing")

@@ -5,9 +5,11 @@
 - [x] Hyprland Lua 模块化基础配置，通过 `--verify-config`
 - [x] Quickshell 骨架：bar（工作区 / 时钟 / Ask 按钮）、Omnibox 雏形
 - [x] `omh doctor` / `omh ctx` / `omh ask`（LocalAI + GPU 租约；`--cloud` 走 Claude）
-- [ ] 在嵌套会话 `make dev` 中完成日常可用性验证（截图、锁屏、壁纸、媒体键）
-- [ ] 主题管线：从壁纸取色 → Lua palette + QML Theme
-- [ ] 切换脚本：接管 `~/.config/hypr`，带备份和回滚
+- [ ] 在嵌套会话 `make dev` 中完成日常可用性验证（截图、锁屏、媒体键）
+- [x] 主题系统：`theme.toml` → 壁纸、配色、形状、bar、字体、特效、形象一键切换；主题面板
+- [x] 3D 形象：可替换的 avatar pack（PMX）、点击 / 拖动 / 右键 / 对话、角色人设 + 本地 LLM
+- [x] 切换脚本 `scripts/switch.sh`：接管 `~/.config/hypr`，带备份和回滚
+- [ ] 主题：从壁纸自动取色（wallust）、kitty / GTK 的 hooks 模板
 
 ## M1 · Brain
 - [ ] `omhd` 常驻进程 + systemd user unit
@@ -28,9 +30,15 @@
 - [ ] AI Sidebar
 
 ## M4 · Voice & Memory
-- [ ] Push-to-talk：ASR → 命令 / 听写；TTS 朗读
+- [ ] Push-to-talk：ASR → 命令 / 听写；TTS 朗读，形象做口型同步
 - [ ] 活动时间线（opt-in、本地）+ 语义检索
 - [ ] 剪贴板语义搜索
+
+## Avatar 后续
+- [ ] 骨骼级呼吸 / 头部看向光标
+- [ ] VRM / glTF pack
+- [ ] 形象对 Agent 事件做出反应（任务完成、等待审批）
+- [ ] 指定显示器
 
 ## M5 · Self-configuring
 - [ ] 自然语言改配置：diff → verify → 确认 → reload → commit / 回滚

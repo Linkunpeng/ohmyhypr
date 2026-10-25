@@ -32,6 +32,8 @@
 | Brain CLI | `brain/src/ohmyhypr/` | M0 ✅ | `omh doctor` / `omh ctx` / `omh ask` |
 | omhd 守护进程 | `brain/` | M1 | 常驻进程：事件订阅、上下文缓存、socket RPC、systemd user service |
 | MCP server | `brain/` | M3 | 把 Desktop Tools 暴露给 Agent |
+| Theme engine | `brain/src/ohmyhypr/theme.py`、`themes/` | ✅ | theme.toml → theme.json（Shell / 形象）+ theme.lua（Hyprland），见 [themes.md](themes.md) |
+| Avatar | `avatar/`、`avatars/`、`brain/src/ohmyhypr/avatar/` | ✅ | GTK/WebKit layer-shell 浮层 + babylon-mmd，见 [avatar.md](avatar.md) |
 
 ## 关键约定
 

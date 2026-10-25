@@ -56,7 +56,7 @@ PanelWindow {
         y: parent.height * 0.22
         width: Math.min(720, parent.width * 0.6)
         height: column.implicitHeight + 24
-        radius: Theme.radius + 4
+        radius: Theme.radius
         color: Theme.bg
         border.color: Qt.rgba(1, 1, 1, 0.08)
 
@@ -84,7 +84,7 @@ PanelWindow {
                         return;
                     root.answer = "";
                     ask.running = false;
-                    ask.command = ["omh", "ask", text];
+                    ask.command = [Omh.omh, "ask", text];
                     ask.running = true;
                 }
             }

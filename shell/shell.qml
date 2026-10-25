@@ -11,14 +11,30 @@ import Quickshell.Hyprland
 import "bar"
 import "omnibox"
 import "services"
+import "themes"
+import "wallpaper"
 
 ShellRoot {
+    Variants {
+        model: Quickshell.screens
+        delegate: Wallpaper {}
+    }
+
     Variants {
         model: Quickshell.screens
         delegate: Bar {}
     }
 
     Omnibox {}
+
+    ThemePicker {}
+
+    GlobalShortcut {
+        appid: "ohmyhypr"
+        name: "themes"
+        description: "Theme picker"
+        onPressed: Omh.themePickerOpen = !Omh.themePickerOpen
+    }
 
     // Entry points bound in hypr/lua/omh/ai.lua as hl.dsp.global("ohmyhypr:<name>").
     GlobalShortcut {

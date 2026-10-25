@@ -3,8 +3,20 @@ return function(s)
 	-- session-wide daemons there so they don't fight the host's instances.
 	local nested = os.getenv("OHMYHYPR_NESTED") == "1"
 
+	local state = os.getenv("XDG_STATE_HOME") or (os.getenv("HOME") .. "/.local/state")
+	local has_theme = io.open(state .. "/ohmyhypr/theme.json", "r")
+	if has_theme then
+		has_theme:close()
+	end
+
 	hl.on("hyprland.start", function()
+		if not has_theme then
+			hl.exec_cmd(s.omh .. " theme apply " .. s.default_theme)
+		end
 		hl.exec_cmd("qs -p " .. s.shell_dir)
+		if s.avatar then
+			hl.exec_cmd(s.omh .. " avatar run --detach")
+		end
 
 		if nested then
 			return

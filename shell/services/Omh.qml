@@ -10,6 +10,12 @@ Singleton {
     id: root
 
     property bool omniboxOpen: false
+    property bool themePickerOpen: false
+
+    // <repo>/bin/omh runs the brain CLI from this checkout. (Qt.resolvedUrl
+    // returns qrc:/qs-blackhole paths under Quickshell; use shellDir.)
+    readonly property string repo: Quickshell.shellDir.replace(/\/shell\/?$/, "/")
+    readonly property string omh: repo + "bin/omh"
 
     // Hyprland 0.56 Lua config: dispatch takes a Lua expression, not the
     // legacy "workspace 3" syntax.
@@ -19,6 +25,10 @@ Singleton {
 
     function focusWorkspace(id: int): void {
         dispatch("hl.dsp.focus({ workspace = " + id + " })");
+    }
+
+    function run(args: list<string>): void {
+        Quickshell.execDetached([omh, ...args]);
     }
 
     function notify(summary: string, body: string): void {

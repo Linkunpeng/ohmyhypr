@@ -1,0 +1,85 @@
+:root {
+    --bubble-bg: rgba(22, 24, 34, 0.86);
+    --bubble-fg: #cad3f5;
+    --accent: #8aadf4;
+    --radius: 12px;
+    --font: "Inter", "Noto Sans CJK SC", sans-serif;
+}
+
+html, body {
+    margin: 0;
+    height: 100%;
+    overflow: hidden;
+    background: transparent;
+    font-family: var(--font);
+    user-select: none;
+}
+
+#stage {
+    width: 100%;
+    height: 100%;
+    display: block;
+    outline: none;
+}
+
+#bubble {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 82%;
+    min-width: 120px;
+    padding: 10px 14px;
+    border-radius: var(--radius);
+    background: var(--bubble-bg);
+    color: var(--bubble-fg);
+    border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+    font-size: 14px;
+    line-height: 1.5;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+    animation: pop 160ms ease-out;
+}
+
+#bubble-text {
+    white-space: pre-wrap;
+    max-height: 9em;
+    overflow-y: auto;
+}
+
+#chat input {
+    width: 100%;
+    margin-top: 6px;
+    box-sizing: border-box;
+    border: none;
+    border-bottom: 1px solid var(--accent);
+    background: transparent;
+    color: var(--bubble-fg);
+    font: inherit;
+    outline: none;
+}
+
+#menu {
+    position: absolute;
+    margin: 0;
+    padding: 4px;
+    list-style: none;
+    border-radius: var(--radius);
+    background: var(--bubble-bg);
+    color: var(--bubble-fg);
+    font-size: 13px;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+}
+
+#menu li {
+    padding: 6px 14px;
+    border-radius: calc(var(--radius) / 2);
+    cursor: pointer;
+}
+
+#menu li:hover {
+    background: color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+@keyframes pop {
+    from { opacity: 0; transform: translateX(-50%) translateY(6px) scale(0.96); }
+    to { opacity: 1; transform: translateX(-50%); }
+}

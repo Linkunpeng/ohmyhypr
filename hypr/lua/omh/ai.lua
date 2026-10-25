@@ -23,6 +23,13 @@ return function(s)
 	hl.bind(M .. " + V", shell("voice-start"))
 	hl.bind(M .. " + V", shell("voice-stop"), { release = true })
 
+	-- Theme: picker / instant cycle
+	hl.bind(M .. " + SHIFT + T", shell("themes"))
+	hl.bind(M .. " + ALT + T", hl.dsp.exec_cmd(s.omh .. " theme next"))
+	-- Avatar: show/hide, talk to her
+	hl.bind(M .. " + Y", hl.dsp.exec_cmd(s.omh .. " avatar toggle"))
+	hl.bind(M .. " + SHIFT + Y", hl.dsp.exec_cmd(s.omh .. " avatar chat"))
+
 	-- Feed desktop events to the brain once omhd exists (M1).
 	-- hl.on("window.active", function(w) ... end)
 end

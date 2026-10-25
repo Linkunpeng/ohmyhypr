@@ -2,7 +2,7 @@ return function(s)
 	-- Blur behind every ohmyhypr shell surface (Quickshell sets the namespace).
 	hl.layer_rule({
 		name = "omh-shell-blur",
-		match = { namespace = "^omh-.*" },
+		match = { namespace = "^omh-(bar|omnibox|themes)$" },
 		blur = true,
 		ignore_alpha = 0.3,
 	})

@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Run the ohmyhypr CLI from this checkout (no install needed). Used by the
+# Hyprland config and the Quickshell UI.
+REPO="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/.." && pwd)"
+exec uv run --quiet --project "$REPO/brain" omh "$@"

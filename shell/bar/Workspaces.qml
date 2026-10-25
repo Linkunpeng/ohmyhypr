@@ -24,8 +24,9 @@ RowLayout {
             visible: modelData.id > 0 && modelData.monitor === root.monitor
             implicitWidth: active ? 28 : 18
             implicitHeight: 18
-            radius: 9
+            radius: Theme.widgetCorner(height)
             color: active ? Theme.accent : Theme.surface
+            Behavior on color { ColorAnimation { duration: 300 } }
 
             Behavior on implicitWidth { NumberAnimation { duration: 160; easing.type: Easing.OutCubic } }
 
