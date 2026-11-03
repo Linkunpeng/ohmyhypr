@@ -29,6 +29,15 @@ ShellRoot {
 
     ThemePicker {}
 
+    WallpaperPicker {}
+
+    GlobalShortcut {
+        appid: "ohmyhypr"
+        name: "wallpaper"
+        description: "Wallpaper picker"
+        onPressed: Omh.toggleWallpaperPicker()
+    }
+
     GlobalShortcut {
         appid: "ohmyhypr"
         name: "themes"
@@ -46,7 +55,7 @@ ShellRoot {
 
     // Not implemented yet: announce instead of failing silently.
     Repeater {
-        model: ["screen-ask", "selection", "sidebar", "voice-start"]
+        model: ["selection", "sidebar", "voice-start"]
         delegate: Item {
             id: stub
             required property string modelData

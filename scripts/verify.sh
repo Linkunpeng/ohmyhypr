@@ -12,6 +12,9 @@ echo "==> brain: py_compile"
 python3 -m py_compile "$REPO"/brain/src/ohmyhypr/*.py "$REPO"/brain/src/ohmyhypr/avatar/*.py
 echo "    ok"
 
+echo "==> brain: provider tests"
+PYTHONPATH="$REPO/brain/src" python3 -m unittest discover -s "$REPO/brain/tests"
+
 if command -v ruff >/dev/null; then
   echo "==> brain: ruff"
   ruff check "$REPO/brain/src"
@@ -24,18 +27,3 @@ for t in theme.available():
     theme.resolve(t)
     print(f"    {t} ok")
 PY
-
-echo "==> avatars: packs"
-PYTHONPATH="$REPO/brain/src" python3 - <<'PY'
-from ohmyhypr import paths
-from ohmyhypr.avatar import pack
-for name in paths.available("avatars", "avatar.toml"):
-    problems = pack.load(name).check()
-    print(f"    {name} {'ok' if not problems else '(assets missing: ' + problems[0] + ')'}")
-PY
-
-if [[ -d "$REPO/avatar/node_modules" ]]; then
-  echo "==> avatar: tsc"
-  (cd "$REPO/avatar" && npx --no-install tsc --noEmit)
-  echo "    ok"
-fi

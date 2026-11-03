@@ -2,7 +2,7 @@
 
 [meta]
 name = "Porcelain"
-description = "明亮瓷白，底部状态栏，圆角卡片，无虚拟形象"
+description = "明亮瓷白，底部状态栏，圆角卡片"
 dark = false
 
 [wallpaper]
@@ -35,6 +35,3 @@ blur = false
 shadow = true
 dim_inactive = false
 animation = "smooth"
-
-[avatar]
-enabled = false

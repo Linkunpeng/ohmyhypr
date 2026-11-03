@@ -11,7 +11,3 @@ __pycache__/
 # editor / os
 .DS_Store
 *.swp
-
-# avatar renderer
-avatar/node_modules/
-avatar/dist/

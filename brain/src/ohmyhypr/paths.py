@@ -18,7 +18,10 @@ RUNTIME = Path(os.environ.get("XDG_RUNTIME_DIR") or f"/tmp/ohmyhypr-{os.getuid()
 
 THEME_JSON = STATE / "theme.json"
 THEME_LUA = STATE / "theme.lua"
-AVATAR_SOCKET = RUNTIME / "avatar.sock"
+PALETTE_JSON = STATE / "palette.json"
+LOCK_CONFIG = STATE / "hyprlock.conf"
+IDLE_CONFIG = STATE / "hypridle.conf"
+AVATAR_SOCKET = Path(os.environ.get("XDG_RUNTIME_DIR") or f"/tmp/ohmyavatar-{os.getuid()}") / "ohmyavatar/avatar.sock"
 
 
 def search(kind: str, name: str, filename: str) -> Path | None:

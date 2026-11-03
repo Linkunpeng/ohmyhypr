@@ -11,6 +11,14 @@ Singleton {
 
     property bool omniboxOpen: false
     property bool themePickerOpen: false
+    property bool wallpaperPickerOpen: false
+    property string wallpaperTargetScreen: ""
+
+    function toggleWallpaperPicker(): void {
+        if (!wallpaperPickerOpen)
+            wallpaperTargetScreen = Hyprland.focusedMonitor?.name ?? "";
+        wallpaperPickerOpen = !wallpaperPickerOpen;
+    }
 
     // <repo>/bin/omh runs the brain CLI from this checkout. (Qt.resolvedUrl
     // returns qrc:/qs-blackhole paths under Quickshell; use shellDir.)

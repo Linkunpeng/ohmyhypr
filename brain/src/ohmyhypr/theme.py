@@ -1,8 +1,8 @@
-"""Themes: one file switches wallpaper, palette, shapes, fonts, effects and avatar.
+"""Themes: one file switches wallpaper, palette, shapes, fonts and effects.
 
 themes/<id>/theme.toml (repo) or ~/.config/ohmyhypr/themes/<id>/theme.toml (user)
   → `omh theme apply <id>` resolves it over DEFAULTS and writes
-     $XDG_STATE_HOME/ohmyhypr/theme.json   read live by Quickshell + avatar host
+     $XDG_STATE_HOME/ohmyhypr/theme.json   read live by Quickshell
      $XDG_STATE_HOME/ohmyhypr/theme.lua    read by hypr/lua/omh/settings.lua
   → reloads Hyprland (only inside an ohmyhypr session) and runs [hooks].
 """
@@ -10,16 +10,19 @@ themes/<id>/theme.toml (repo) or ~/.config/ohmyhypr/themes/<id>/theme.toml (user
 from __future__ import annotations
 
 import copy
+import fcntl
 import json
 import os
 import re
 import subprocess
 import time
+import tempfile
+from contextlib import contextmanager
 import tomllib
 from pathlib import Path
 from typing import Any
 
-from . import paths
+from . import palette, paths
 
 DEFAULTS: dict[str, Any] = {
     "meta": {"name": "", "description": "", "dark": True},
@@ -48,7 +51,6 @@ DEFAULTS: dict[str, Any] = {
     },
     "font": {"ui": "Inter", "mono": "JetBrainsMono Nerd Font", "size": 13},
     "effects": {"blur": True, "shadow": True, "dim_inactive": False, "animation": "smooth"},
-    "avatar": {"enabled": True, "pack": ""},
     "hooks": {"apply": []},
 }
 
@@ -158,9 +160,23 @@ def to_lua(t: dict[str, Any]) -> str:
 
 def _write_atomic(path: Path, text: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    tmp = path.with_suffix(path.suffix + ".tmp")
-    tmp.write_text(text)
-    os.replace(tmp, path)
+    temp = None
+    try:
+        with tempfile.NamedTemporaryFile("w", encoding="utf-8", dir=path.parent, delete=False) as f:
+            temp = Path(f.name)
+            f.write(text)
+        os.replace(temp, path)
+    finally:
+        if temp is not None:
+            temp.unlink(missing_ok=True)
+
+
+@contextmanager
+def state_lock():
+    paths.STATE.mkdir(parents=True, exist_ok=True)
+    with (paths.STATE / "appearance.lock").open("a") as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        yield
 
 
 def in_ohmyhypr_session() -> bool:
@@ -171,22 +187,47 @@ def in_ohmyhypr_session() -> bool:
     return out.returncode == 0 and out.stdout.strip() not in ("", "nil")
 
 
-def apply(theme_id: str) -> dict[str, Any]:
-    t = resolve(theme_id)
+def publish(t: dict[str, Any]) -> dict[str, Any]:
+    """Publish a complete resolved appearance; caller holds state_lock()."""
+    t["rev"] = time.time_ns()
+    t["palette"]["bg_rgba"] = _rgba(t["palette"]["bg"], t["palette"]["opacity"])
+    color_state = {"source": t.get("palette_source", "theme"), "wallpaper": t.get("palette_wallpaper", t["wallpaper"]["path"]),
+                   "dark": t["meta"]["dark"], "colors": t["palette"], "rev": t["rev"]}
     _write_atomic(paths.THEME_LUA, to_lua(t))
+    _write_atomic(paths.PALETTE_JSON, json.dumps(color_state, ensure_ascii=False, indent=2))
     _write_atomic(paths.THEME_JSON, json.dumps(t, ensure_ascii=False, indent=2))
 
-    report: dict[str, Any] = {"theme": theme_id, "hyprland": "skipped (not an ohmyhypr session)", "hooks": []}
+    report: dict[str, Any] = {"theme": t["id"], "hyprland": "skipped (not an ohmyhypr session)", "hooks": []}
     if in_ohmyhypr_session():
         out = subprocess.run(["hyprctl", "reload", "config-only"], capture_output=True, text=True)
         report["hyprland"] = out.stdout.strip() or out.stderr.strip()
+        if out.returncode:
+            report["hyprland_error"] = out.returncode
 
-    env = {**os.environ, "OHMYHYPR_THEME_JSON": str(paths.THEME_JSON), "OHMYHYPR_THEME": theme_id}
+    env = {**os.environ, "OHMYHYPR_THEME_JSON": str(paths.THEME_JSON), "OHMYHYPR_THEME": t["id"],
+           "OHMYHYPR_PALETTE_JSON": str(paths.PALETTE_JSON)}
     for hook in t["hooks"]["apply"]:
         res = subprocess.run(hook, shell=True, env=env, capture_output=True, text=True, timeout=30)
         report["hooks"].append({"cmd": hook, "rc": res.returncode})
-    if t["wallpaper"].get("missing"):
-        report["warning"] = f"wallpaper not found: {t['wallpaper']['missing']} (gradient fallback)"
+    return report
+
+
+def apply(theme_id: str) -> dict[str, Any]:
+    t = resolve(theme_id)
+    warning = None
+    t["palette_source"] = "theme"
+    if t["wallpaper"]["path"]:
+        try:
+            t["palette"] = palette.extract(Path(t["wallpaper"]["path"]), t["meta"]["dark"], t["palette"]["opacity"])
+            t["palette_source"] = "wallpaper"
+        except palette.PaletteError as e:
+            warning = str(e) + "; using theme colors"
+    elif t["wallpaper"].get("missing"):
+        warning = f"wallpaper not found: {t['wallpaper']['missing']} (gradient fallback)"
+    with state_lock():
+        report = publish(t)
+    if warning:
+        report["warning"] = warning
     return report
 
 
@@ -211,8 +252,7 @@ def summary() -> list[dict[str, Any]]:
             "name": t["meta"]["name"],
             "description": t["meta"]["description"],
             "current": theme_id == cur,
-            "wallpaper": t["wallpaper"]["path"],
-            "avatar": t["avatar"]["pack"] if t["avatar"]["enabled"] else "",
+            "wallpaper": t.get("palette_wallpaper", t["wallpaper"]["path"]),
             "palette": {k: t["palette"][k] for k in ("bg", "surface", "fg", "accent", "accent_alt")},
             "radius": t["shape"]["radius"],
         })

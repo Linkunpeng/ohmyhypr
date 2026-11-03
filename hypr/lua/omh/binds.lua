@@ -4,6 +4,8 @@ return function(s)
 	local M = s.mod
 
 	hl.bind(M .. " + Return", hl.dsp.exec_cmd(s.terminal))
+	hl.bind(M .. " + SHIFT + Return", hl.dsp.exec_cmd(string.format("%q %q", s.dropdown_terminal, s.terminal)))
+	hl.bind(M .. " + SHIFT + S", hl.dsp.exec_cmd(string.format("%q", s.screenshot)))
 	hl.bind(M .. " + E", hl.dsp.exec_cmd(s.files))
 	hl.bind(M .. " + B", hl.dsp.exec_cmd(s.browser))
 	hl.bind(M .. " + D", hl.dsp.exec_cmd(s.launcher))
@@ -13,6 +15,7 @@ return function(s)
 	hl.bind(M .. " + T", hl.dsp.window.float({ action = "toggle" }))
 	hl.bind(M .. " + P", hl.dsp.window.pseudo())
 	hl.bind("CTRL + ALT + Delete", hl.dsp.exit())
+	hl.bind(M .. " + SHIFT + Escape", hl.dsp.exec_cmd(string.format("%q lock", s.omh)))
 
 	local dirs = { H = "left", J = "down", K = "up", L = "right", left = "left", down = "down", up = "up", right = "right" }
 	for key, dir in pairs(dirs) do

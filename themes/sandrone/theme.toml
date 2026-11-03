@@ -2,7 +2,7 @@
 
 [meta]
 name = "木偶 Marionette"
-description = "黄铜与绯红的精密机关；直角控件，贴边状态栏，桑多涅陪伴"
+description = "黄铜与绯红的精密机关；直角控件，贴边状态栏"
 dark = true
 
 [wallpaper]
@@ -42,7 +42,3 @@ blur = true
 shadow = true
 dim_inactive = true
 animation = "snappy"
-
-[avatar]
-enabled = true
-pack = "sandrone"

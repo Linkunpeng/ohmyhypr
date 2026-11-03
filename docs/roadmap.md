@@ -4,12 +4,13 @@
 - [x] 仓库骨架、头脑风暴、架构文档
 - [x] Hyprland Lua 模块化基础配置，通过 `--verify-config`
 - [x] Quickshell 骨架：bar（工作区 / 时钟 / Ask 按钮）、Omnibox 雏形
-- [x] `omh doctor` / `omh ctx` / `omh ask`（LocalAI + GPU 租约；`--cloud` 走 Claude）
+- [x] `omh doctor` / `omh ctx` / `omh ask`（OpenAI / Anthropic 兼容 API）
 - [ ] 在嵌套会话 `make dev` 中完成日常可用性验证（截图、锁屏、媒体键）
-- [x] 主题系统：`theme.toml` → 壁纸、配色、形状、bar、字体、特效、形象一键切换；主题面板
-- [x] 3D 形象：可替换的 avatar pack（PMX）、点击 / 拖动 / 右键 / 对话、角色人设 + 本地 LLM
+- [x] 主题系统：`theme.toml` → 壁纸、配色、形状、bar、字体、特效一键切换；主题面板
+- [x] 3D 形象：通过接口接入独立适配器，读取人物设定及触发可选动作
 - [x] 切换脚本 `scripts/switch.sh`：接管 `~/.config/hypr`，带备份和回滚
-- [ ] 主题：从壁纸自动取色（wallust）、kitty / GTK 的 hooks 模板
+- [x] 壁纸自动取色并同步 Hyprland、Quickshell 和锁屏
+- [ ] kitty / GTK 的主题 hooks 模板
 
 ## M1 · Brain
 - [ ] `omhd` 常驻进程 + systemd user unit

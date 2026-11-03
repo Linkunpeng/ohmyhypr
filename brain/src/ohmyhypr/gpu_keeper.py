@@ -49,7 +49,7 @@ def lease(cfg: dict[str, Any]) -> Iterator[str | None]:
             timeout=cfg["wait_timeout"] + 5,
         )
     except urllib.error.HTTPError as e:
-        raise GpuBusy(f"GPU Keeper refused lease (HTTP {e.code}); try `omh ask --cloud`") from e
+        raise GpuBusy(f"GPU Keeper refused lease (HTTP {e.code})") from e
     except (urllib.error.URLError, TimeoutError, OSError) as e:
         if cfg.get("required"):
             raise GpuBusy(f"GPU Keeper unreachable: {e}") from e

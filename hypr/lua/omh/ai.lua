@@ -13,8 +13,6 @@ return function(s)
 
 	-- P0: unified launcher + natural-language intent
 	hl.bind(M .. " + SPACE", shell("omnibox"))
-	-- P0: select a region, ask the VLM about it
-	hl.bind(M .. " + SHIFT + S", shell("screen-ask"))
 	-- P0: act on the current text selection (translate / explain / rewrite)
 	hl.bind(M .. " + period", shell("selection"))
 	-- P1: persistent chat sidebar with desktop context
@@ -22,6 +20,9 @@ return function(s)
 	-- P1: push-to-talk (press = start, release = stop)
 	hl.bind(M .. " + V", shell("voice-start"))
 	hl.bind(M .. " + V", shell("voice-stop"), { release = true })
+
+	-- Wallpaper picker
+	hl.bind(M .. " + SHIFT + W", shell("wallpaper"))
 
 	-- Theme: picker / instant cycle
 	hl.bind(M .. " + SHIFT + T", shell("themes"))

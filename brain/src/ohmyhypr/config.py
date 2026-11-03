@@ -10,37 +10,11 @@ from typing import Any
 CONFIG_PATH = Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config")) / "ohmyhypr" / "config.toml"
 
 DEFAULTS: dict[str, Any] = {
-    "router": {
-        # "local" | "cloud". Screen / clipboard context never leaves the machine
-        # unless cloud_context is enabled.
-        "default": "local",
-        "cloud_context": False,
-    },
-    "local": {
-        "base_url": "http://127.0.0.1:8080/v1",
-        "chat_model": "llm-smart",
-        "vision_model": "vlm-default",
-        "asr_model": "asr-default",
-        "tts_model": "tts-default",
-        "timeout": 120,
-    },
-    "gpu_keeper": {
-        "url": "http://127.0.0.1:6101",
-        "owner": "LOCALAI",
-        "enabled": True,
-        # Interactive use: give up quickly instead of hanging the UI.
-        "wait_timeout": 10,
-        "ttl": 120,
-        # When the keeper is unreachable: False = run unmanaged, True = refuse.
-        "required": False,
-    },
-    "cloud": {
-        "command": ["claude", "-p"],
-    },
-    "avatar": {
-        # Used when no theme is applied; themes choose their own pack.
-        "pack": "sandrone",
-    },
+    "ai": {"default_provider": "openai", "include_context": False},
+    "providers": {},
+    "wallpaper": {"directory": "~/Pictures/wallpapers"},
+    "lock": {"timeout_seconds": 600, "before_sleep": True},
+    "avatar": {"command": [], "socket": "", "model": ""},
 }
 
 

@@ -1,6 +1,6 @@
 # 主题
 
-一个 `theme.toml` 决定整个桌面的观感：**壁纸、配色、窗口边框、控件形状、状态栏样式、字体、特效、3D 形象**。
+一个 `theme.toml` 定义默认壁纸、配色、窗口边框、控件形状、状态栏样式、字体和特效。壁纸和配色也可独立管理，见 [壁纸、配色与锁屏](appearance.md)。
 
 ```bash
 omh theme list            # * 标出当前主题
@@ -8,18 +8,19 @@ omh theme apply sandrone  # 一键切换
 omh theme next            # 切到下一个（Super+Alt+T）
 ```
 
-`Super+Shift+T` 或点 bar 上的 `◐ 主题名` 打开主题选择面板（← → 选择，Enter 应用）。
+`Super+Shift+T` 打开主题选择面板（← → 选择，Enter 应用）。
 
 ## 切换时发生了什么
 
 ```
 omh theme apply <id>
   ├─ 解析 theme.toml，与默认值合并
+  ├─ 默认壁纸存在时提取配色，否则使用主题配色
+  ├─ 写 $XDG_STATE_HOME/ohmyhypr/palette.json ──▶ 供其他工具和 hooks 读取
   ├─ 写 $XDG_STATE_HOME/ohmyhypr/theme.json ──▶ Quickshell（颜色渐变过渡、壁纸交叉淡化、bar 形状）
-  │                                        └─▶ avatar host（换形象 / 显示隐藏 / 气泡配色）
   ├─ 写 $XDG_STATE_HOME/ohmyhypr/theme.lua  ──▶ hyprctl reload config-only（边框、圆角、间隙、模糊、阴影、动画）
   │     （只在 ohmyhypr 会话里 reload，通过 `hyprctl repl 'return OHMYHYPR_ROOT'` 判断）
-  └─ 依次运行 [hooks].apply（环境变量 OHMYHYPR_THEME_JSON 指向 theme.json）
+  └─ 依次运行 [hooks].apply（环境变量 OHMYHYPR_THEME_JSON / OHMYHYPR_PALETTE_JSON 指向状态文件）
 ```
 
 ## 字段
@@ -34,13 +35,17 @@ omh theme apply <id>
 | `[shape]` | `radius`（窗口和面板圆角）、`border`、`gaps_in`、`gaps_out`、`bar` = `floating` \| `docked`、`bar_position` = `top` \| `bottom`、`bar_height`、`widget` = `pill` \| `rounded` \| `square` |
 | `[font]` | `ui`、`mono`、`size` |
 | `[effects]` | `blur`、`shadow`、`dim_inactive`、`animation` = `smooth` \| `snappy` \| `none` |
-| `[avatar]` | `enabled`、`pack`、可选的 `width` / `height` |
 | `[hooks]` | `apply = ["shell 命令", …]`，用来同步 kitty、GTK 等外部程序 |
 
 内置主题：
 
 | 主题 | 风格 |
 |---|---|
-| `sandrone` | 木偶：黄铜与绯红、直角控件、贴边 bar、桑多涅 |
+| `sandrone` | 木偶：黄铜与绯红、直角控件、贴边 bar |
 | `midnight` | 冷色玻璃、悬浮胶囊 bar |
-| `porcelain` | 浅色、底部 bar、无形象 |
+| `porcelain` | 浅色、底部 bar |
+
+形象由独立适配器管理，主题切换不再切换或隐藏模型；参见 [形象接口](avatar.md)。
+
+状态栏使用左、中、右三段独立悬浮布局，段间透明区域可点击下方窗口。
+位置由 `[shape] bar_position` 控制；`bar` 为旧主题兼容字段，现有主题统一使用三段布局。

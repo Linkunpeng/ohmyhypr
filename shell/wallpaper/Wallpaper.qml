@@ -30,12 +30,15 @@ PanelWindow {
         }
     }
 
+    readonly property var wallpaperSpec: Theme.data.wallpapers?.[screen.name] ?? Theme.data.wallpaper ?? ({})
+    readonly property string imagePath: wallpaperSpec.path ?? ""
+    readonly property string imageFit: wallpaperSpec.fit ?? "cover"
     property bool showA: true
 
     Image {
         id: a
         anchors.fill: parent
-        fillMode: Theme.wallpaperFit === "contain" ? Image.PreserveAspectFit : Theme.wallpaperFit === "center" ? Image.Pad : Image.PreserveAspectCrop
+        fillMode: root.imageFit === "contain" ? Image.PreserveAspectFit : root.imageFit === "center" ? Image.Pad : Image.PreserveAspectCrop
         asynchronous: true
         sourceSize: Qt.size(root.width, root.height)
         opacity: root.showA ? 1 : 0
@@ -53,15 +56,12 @@ PanelWindow {
     }
 
     function show(path: string): void {
-        const src = path ? "file://" + path : "";
+        const src = path ? "file://" + path.split("/").map(encodeURIComponent).join("/") : "";
         const next = showA ? b : a;
         next.source = src;
         showA = !showA;
     }
 
-    Connections {
-        target: Theme
-        function onWallpaperChanged() { root.show(Theme.wallpaper); }
-    }
-    Component.onCompleted: show(Theme.wallpaper)
+    onImagePathChanged: root.show(imagePath)
+    Component.onCompleted: show(imagePath)
 }

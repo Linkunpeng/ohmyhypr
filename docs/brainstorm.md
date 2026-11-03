@@ -1,6 +1,7 @@
 # ohmyhypr 头脑风暴：AI Native Desktop
 
 > 2026-10-25 · 初版。这是"想法池"，不是承诺；落地顺序见 [roadmap.md](roadmap.md)。
+> AI 接入方式与隐私默认值已调整，以 [架构](architecture.md) 和配置示例为准。
 
 ## 1. 核心命题
 

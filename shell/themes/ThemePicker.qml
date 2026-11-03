@@ -5,7 +5,7 @@ import Quickshell.Io
 import Quickshell.Wayland
 import "../services"
 
-// One-click theme switching: cards with wallpaper, palette and avatar.
+// One-click theme switching: cards with wallpaper and palette.
 // ←/→ to choose, Enter to apply, Esc to close.
 PanelWindow {
     id: root
@@ -160,12 +160,6 @@ PanelWindow {
                             font.bold: true
                             elide: Text.ElideRight
                             width: parent.width
-                        }
-                        Text {
-                            text: card.modelData.avatar ? "形象 · " + card.modelData.avatar : "无形象"
-                            color: Qt.rgba(Qt.color(card.pal.fg ?? "white").r, Qt.color(card.pal.fg ?? "white").g, Qt.color(card.pal.fg ?? "white").b, 0.6)
-                            font.family: Theme.font
-                            font.pixelSize: 12
                         }
                         Row {
                             spacing: 6

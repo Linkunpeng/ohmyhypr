@@ -14,11 +14,9 @@
                   │ events                                      │ omh CLI / socket (M1)
 ┌─────────────────▼─────────────────────────────────────────────▼───────────────┐
 │ Brain  brain/  (Python, `omh` / omhd)                                         │
-│  Context Engine ── Model Router ── Desktop Tools ── Permission + Audit        │
-│        │                │  local             │                                │
-│        │                ├─▶ LocalAI :8080 (llm / vlm / asr / tts)             │
-│        │                │     └─ GPU Keeper :6101 lease                       │
-│        │                └─▶ Claude (claude CLI / Agent SDK)                   │
+│  Context Engine ── Model Providers ── Desktop Tools ── Permission + Audit     │
+│        │                ├─▶ OpenAI-compatible chat API                        │
+│        │                └─▶ Anthropic-compatible messages API                 │
 │        └── MCP server (M3) ◀── Claude Code & other agents                     │
 └───────────────────────────────────────────────────────────────────────────────┘
 ```
@@ -32,8 +30,8 @@
 | Brain CLI | `brain/src/ohmyhypr/` | M0 ✅ | `omh doctor` / `omh ctx` / `omh ask` |
 | omhd 守护进程 | `brain/` | M1 | 常驻进程：事件订阅、上下文缓存、socket RPC、systemd user service |
 | MCP server | `brain/` | M3 | 把 Desktop Tools 暴露给 Agent |
-| Theme engine | `brain/src/ohmyhypr/theme.py`、`themes/` | ✅ | theme.toml → theme.json（Shell / 形象）+ theme.lua（Hyprland），见 [themes.md](themes.md) |
-| Avatar | `avatar/`、`avatars/`、`brain/src/ohmyhypr/avatar/` | ✅ | GTK/WebKit layer-shell 浮层 + babylon-mmd，见 [avatar.md](avatar.md) |
+| Theme engine | `brain/src/ohmyhypr/theme.py`、`themes/` | ✅ | theme.toml → theme.json（Shell）+ theme.lua（Hyprland），见 [themes.md](themes.md) |
+| Avatar 接口 | `brain/src/ohmyhypr/avatar/` | ✅ | 通过 Unix socket 对接独立的模型适配器，见 [avatar.md](avatar.md) |
 
 ## 关键约定
 
@@ -57,15 +55,12 @@ Lua：`hl.dsp.global("ohmyhypr:<name>")`  ⇄  QML：`GlobalShortcut { appid: "o
 
 ### 路由与隐私
 
-- `router.default = "local"`；带 `--cloud` 才走 Claude。
-- `router.cloud_context = false`：走云端时不附带桌面上下文。
+- `[ai] default_provider` 选择配置中的提供商；`--provider` 可指定其他提供商。
+- 桌面上下文默认关闭；用 `--context` 或 `ai.include_context = true` 显式启用。
 - 上下文用 `<desktop_context>` 包裹，system prompt 里声明它是数据、不是指令。
 
-### GPU 租约
-
-本地推理一律包在 `gpu_keeper.lease()` 里：acquire → 每 ttl/3 renew 一次 → finally release。
-交互场景 `wait_timeout=10`；返回 409 / 503 时快速失败，并提示改用 `--cloud`。
-Keeper 不可达时，默认降级为 unmanaged 运行；设 `required = true` 则直接拒绝。
+提供商只依赖 API 格式、URL、模型和可选密钥；显存调度由具体推理服务或其部署环境处理。
+在本机共享 GPU 的环境中，使用 LocalAI 前仍须由部署环境确保持有 GPU Keeper 租约。
 
 ## 数据流示例：Screen Ask（M2 目标）
 
@@ -73,7 +68,7 @@ Keeper 不可达时，默认降级为 unmanaged 运行；设 `required = true` �
 Super+Shift+S → Lua bind → global ohmyhypr:screen-ask
   → Shell 显示选区遮罩 → slurp/grim 截取 PNG
   → omh ask --image <png> "<用户问题>"
-  → router: 含图像 → 本地 vlm-default（GPU 租约）
+  → 多模态 API（待实现）
   → 流式回答显示在浮层；可"复制 / 发到 Sidebar / 用 Claude 深挖"
 ```
 

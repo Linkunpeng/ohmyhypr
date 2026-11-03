@@ -35,7 +35,3 @@ blur = true
 shadow = true
 dim_inactive = false
 animation = "smooth"
-
-[avatar]
-enabled = true
-pack = "sandrone"

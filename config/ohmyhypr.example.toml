@@ -1,22 +1,41 @@
-# Copy to ~/.config/ohmyhypr/config.toml. Every key is optional;
-# defaults live in brain/src/ohmyhypr/config.py.
+# Copy to ~/.config/ohmyhypr/config.toml and fill in the endpoint and model.
+# API keys may be set directly with api_key, or through api_key_env (recommended).
+# Omit both for services that do not require authentication.
 
-[router]
-default = "local"        # "local" | "cloud"
-cloud_context = false    # attach desktop context when routing to Claude?
+[ai]
+default_provider = "openai"
+include_context = false  # opt in to sending desktop context, including clipboard for `omh ask`
 
-[local]
-base_url = "http://127.0.0.1:8080/v1"
-chat_model = "llm-smart"
-vision_model = "vlm-default"
-asr_model = "asr-default"
-tts_model = "tts-default"
+[providers.openai]
+type = "openai"
+base_url = "https://api.openai.com/v1"  # API base URL; omit /chat/completions
+api_key_env = "OPENAI_API_KEY"
+model = ""  # your provider's model ID
+timeout = 120
 
-[gpu_keeper]
-url = "http://127.0.0.1:6101"
-wait_timeout = 10        # seconds; interactive use should fail fast
-ttl = 120
-required = false         # refuse to run unmanaged when the keeper is down
+[providers.anthropic]
+type = "anthropic"
+base_url = "https://api.anthropic.com/v1"  # API base URL; omit /messages
+api_key_env = "ANTHROPIC_API_KEY"
+model = ""  # your provider's model ID
+max_tokens = 1024
+timeout = 120
 
-[cloud]
-command = ["claude", "-p"]
+# Add as many named providers as you need, including self-hosted services.
+# [providers.my_server]
+# type = "openai"
+# base_url = "http://127.0.0.1:1234/v1"
+# model = "my-model"
+
+[avatar]
+# Independent adapter process implementing docs/avatar.md. Leave empty to disable.
+command = []  # e.g. ["/path/to/ohmyavatar/bin/ohmyavatar"]
+# socket = "/run/user/1000/ohmyavatar/avatar.sock"  # optional, defaults to XDG_RUNTIME_DIR
+# model = "sandrone"  # optional adapter-specific model ID loaded at startup
+
+[lock]
+timeout_seconds = 600  # 0 disables idle locking
+before_sleep = true    # lock before suspend via hypridle and logind
+
+[wallpaper]
+directory = "~/Pictures/wallpapers"  # recursively listed in the wallpaper picker

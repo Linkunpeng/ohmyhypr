@@ -42,15 +42,17 @@ return function(root)
 
 		mod = "SUPER",
 		terminal = "kitty",
+		dropdown_terminal = repo .. "scripts/dropdown-terminal.sh",
+		screenshot = repo .. "scripts/screenshot.sh",
 		files = "thunar",
-		browser = "google-chrome-stable",
+		browser = "chromium",
 		-- Fallback launcher while the Quickshell omnibox is not running.
 		launcher = "rofi -show drun",
 		-- ohmyhypr CLI, run straight from this checkout.
 		omh = repo .. "bin/omh",
 		-- Applied on first start when no theme has been chosen yet.
 		default_theme = "sandrone",
-		avatar = true,
+		avatar = true, -- start the optional configured avatar adapter
 
 		-- Monitors used when local.lua does not define any.
 		monitors = {
