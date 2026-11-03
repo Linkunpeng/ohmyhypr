@@ -48,7 +48,7 @@ PanelWindow {
         if (bind.modmask & 32) mods.push("Mod3");
         if (bind.modmask & 128) mods.push("Mod5");
         const match = (bind.description || "").match(/\[key:([^\]]+)\]/);
-        const names = { "mouse:272": "鼠标左键", "mouse:273": "鼠标右键", mouse_up: "滚轮向上", mouse_down: "滚轮向下", period: ".", SPACE: "Space", Return: "Enter" };
+        const names = { "mouse:272": "鼠标左键", "mouse:273": "鼠标右键", mouse_up: "滚轮向上", mouse_down: "滚轮向下", period: ".", minus: "-", equal: "=", SPACE: "Space", Return: "Enter" };
         const key = bind.key || (match ? match[1] : (bind.keycode ? "code:" + bind.keycode : "未知按键"));
         mods.push(names[key] || key);
         return mods.join(" + ") + (bind.release ? "（松开）" : "");

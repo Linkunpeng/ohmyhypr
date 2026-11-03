@@ -1,8 +1,5 @@
 import QtQuick
-import QtQuick.Layouts
 import QtQuick.Controls
-import Qt5Compat.GraphicalEffects
-import Quickshell
 import "../services"
 
 Rectangle {
@@ -12,42 +9,33 @@ Rectangle {
     readonly property var device: kind === "wifi" ? Connectivity.wifi : Connectivity.bluetooth
     readonly property bool powered: device.available && device.enabled
     readonly property bool connected: kind === "wifi" ? !!device.connected : (device.devices || []).some(d => d.connected)
-    implicitWidth: content.implicitWidth + 12
+    implicitWidth: Math.max(implicitHeight, content.implicitWidth + 10)
     implicitHeight: 26
-    radius: Theme.widgetCorner(height)
+    radius: Theme.softCorner(height)
     color: hover.containsMouse || Connectivity.openMenu === kind ? Theme.withAlpha(Theme.accent, 0.22) : "transparent"
     ToolTip.visible: hover.containsMouse
     ToolTip.delay: 600
     ToolTip.text: !device.available ? (kind === "wifi" ? "Wi-Fi unavailable" : "Bluetooth unavailable") :
                   !device.enabled ? "Off" : kind === "wifi" ? (device.connected || "Not connected") :
                   (connected ? "Connected" : "On")
-    RowLayout {
+    // Nerd Font (Material) glyphs: Wi-Fi shows signal strength, Bluetooth shows link state.
+    readonly property int signal: {
+        const net = kind === "wifi" ? (device.networks || []).find(n => n.connected) : null;
+        return net && net.signal !== null && net.signal !== undefined ? net.signal : -60;
+    }
+    readonly property string glyph: kind === "wifi"
+        ? (!device.available ? "\udb82\udd2b" : !powered ? "\udb82\udd2e" : !connected ? "\udb82\udd2f"
+           : signal >= -55 ? "\udb82\udd28" : signal >= -67 ? "\udb82\udd25" : signal >= -75 ? "\udb82\udd22" : "\udb82\udd1f")
+        : (!device.available || !powered ? "\udb80\udcb2" : connected ? "\udb80\udcb1" : "\udb80\udcaf")
+    Text {
         id: content
         anchors.centerIn: parent
-        spacing: 5
-        Rectangle {
-            implicitWidth: 7; implicitHeight: 7; radius: 4
-            color: !root.device.available ? Theme.urgent : root.connected ? Theme.accent : root.powered ? Theme.muted : Theme.urgent
-            opacity: root.device.available && !root.powered ? 0.55 : 1
-        }
-        Item {
-            implicitWidth: 20
-            implicitHeight: 20
-            Image {
-                id: glyph
-                anchors.fill: parent
-                source: "file://" + (Quickshell.shellDir + "/assets/icons/" + (root.kind === "wifi" ? "wifi.png" : "bluetooth.png")).split("/").map(encodeURIComponent).join("/")
-                sourceSize: Qt.size(80, 80)
-                fillMode: Image.PreserveAspectFit
-                smooth: true
-                visible: false
-            }
-            ColorOverlay {
-                anchors.fill: glyph
-                source: glyph
-                color: root.powered ? Theme.fg : Theme.muted
-            }
-        }
+        text: root.glyph
+        color: !root.device.available ? Theme.urgent : root.connected ? Theme.accent : root.powered ? Theme.fg : Theme.muted
+        opacity: root.device.available && !root.powered ? 0.6 : 1
+        font.family: Theme.monoFont
+        font.pixelSize: Theme.fontSize + 5
+        Behavior on color { ColorAnimation { duration: 200 } }
     }
     MouseArea {
         id: hover

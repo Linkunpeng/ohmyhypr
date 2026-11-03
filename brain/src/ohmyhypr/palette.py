@@ -53,10 +53,19 @@ def _readable(color: tuple[int, int, int], background: tuple[int, int, int], dar
     return _mix(color, target, high)
 
 
+# Most transparent the bar gets; the blur behind it carries the rest.
+BAR_OPACITY_MIN = 0.2
+
+
+def _histogram(data: bytes) -> Counter:
+    # Quantization keeps small antialiasing differences from dominating the histogram.
+    return Counter(tuple(min(255, (v // 16) * 16 + 8) for v in data[i:i + 3]) for i in range(0, len(data), 3))
+
+
 def _bar_opacity(histogram: Counter, background: tuple[int, int, int], foreground: tuple[int, int, int],
                  dark: bool) -> float:
     # Protect text against the brightest (or darkest for a light theme) 5% of
-    # the wallpaper, while allowing dark wallpapers to retain transparency.
+    # the pixels behind the bar, while allowing dark wallpapers to retain transparency.
     ranked = sorted(histogram, key=_luminance, reverse=dark)
     threshold = max(1, math.ceil(sum(histogram.values()) * 0.05))
     count = 0
@@ -66,7 +75,7 @@ def _bar_opacity(histogram: Counter, background: tuple[int, int, int], foregroun
         behind = color
         if count >= threshold:
             break
-    low, high = 0.38, 0.85
+    low, high = BAR_OPACITY_MIN, 0.85
     if contrast(foreground, _mix(behind, background, low)) >= 4.5:
         return low
     for _ in range(12):
@@ -78,12 +87,13 @@ def _bar_opacity(histogram: Counter, background: tuple[int, int, int], foregroun
     return min(0.85, math.ceil(high * 100) / 100)
 
 
-def from_pixels(data: bytes, dark: bool = True, opacity: float = 0.78) -> dict[str, Any]:
+def from_pixels(data: bytes, dark: bool = True, opacity: float = 0.78,
+                bar_data: bytes | None = None) -> dict[str, Any]:
+    """bar_data: the pixels the bar sits on (defaults to the whole image)."""
     if not data or len(data) % 3:
         raise PaletteError("image produced no valid RGB pixels")
-    # Quantization keeps small antialiasing differences from dominating the histogram.
-    histogram = Counter(tuple(min(255, (v // 16) * 16 + 8) for v in data[i:i + 3])
-                        for i in range(0, len(data), 3))
+    histogram = _histogram(data)
+    bar_histogram = _histogram(bar_data) if bar_data and not len(bar_data) % 3 else histogram
     dominant = histogram.most_common(1)[0][0]
     candidates = []
     for rgb, count in histogram.items():
@@ -105,7 +115,7 @@ def from_pixels(data: bytes, dark: bool = True, opacity: float = 0.78) -> dict[s
         "accent": _hex(accent), "accent_alt": _hex(accent_alt),
         "urgent": _hex(_readable((225, 67, 76), surface, dark)),
         "border_active": _hex(accent), "border_inactive": _hex(_mix(bg, fg, 0.25)),
-        "opacity": opacity, "bar_opacity": _bar_opacity(histogram, bg, fg, dark),
+        "opacity": opacity, "bar_opacity": _bar_opacity(bar_histogram, bg, fg, dark),
     }
 
 
@@ -123,8 +133,12 @@ def extract(image: Path, dark: bool = True, opacity: float = 0.78) -> dict[str, 
     if proc.returncode or len(proc.stdout) != 64 * 64 * 4:
         raise PaletteError("could not decode wallpaper as an image")
     # Transparent pixels are not visible on the desktop and should not bias the palette.
-    pixels = b"".join(proc.stdout[i:i + 3] for i in range(0, len(proc.stdout), 4) if proc.stdout[i + 3] >= 128)
-    return from_pixels(pixels, dark, opacity)
+    def rgb(raw: bytes) -> bytes:
+        return b"".join(raw[i:i + 3] for i in range(0, len(raw), 4) if raw[i + 3] >= 128)
+    # The bar covers ~4% of a screen edge (top or bottom); 3 of 64 rows each side.
+    row = 64 * 4
+    edges = proc.stdout[:3 * row] + proc.stdout[-3 * row:]
+    return from_pixels(rgb(proc.stdout), dark, opacity, rgb(edges))
 
 
 def current() -> dict[str, Any] | None:

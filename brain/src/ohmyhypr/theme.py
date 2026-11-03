@@ -50,7 +50,8 @@ DEFAULTS: dict[str, Any] = {
         "widget": "pill",  # pill | rounded | square
     },
     "font": {"ui": "Inter", "mono": "JetBrainsMono Nerd Font", "size": 13},
-    "effects": {"blur": True, "shadow": True, "dim_inactive": False, "animation": "smooth"},
+    "effects": {"blur": True, "shadow": True, "dim_inactive": False, "animation": "smooth",
+                "active_opacity": 1.0, "inactive_opacity": 1.0},
     "hooks": {"apply": []},
 }
 

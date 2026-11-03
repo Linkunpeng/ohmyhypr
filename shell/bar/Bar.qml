@@ -66,11 +66,7 @@ PanelWindow {
             anchors.centerIn: parent
             spacing: 10
             Clock {}
-            Rectangle {
-                width: 1
-                height: 16
-                color: Theme.withAlpha(Theme.accent, 0.45)
-            }
+            Separator {}
             NotificationButton { screenName: bar.screen.name }
         }
     }
@@ -90,12 +86,7 @@ PanelWindow {
             SystemStatus {}
             ConnectivityButton { kind: "wifi"; screenName: bar.screen.name }
             ConnectivityButton { kind: "bluetooth"; screenName: bar.screen.name }
-            Rectangle {
-                visible: tray.itemCount > 0
-                width: 1
-                height: 18
-                color: Theme.withAlpha(Theme.accent, 0.45)
-            }
+            Separator { visible: tray.itemCount > 0 }
             Tray { id: tray }
         }
     }

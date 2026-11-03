@@ -76,4 +76,4 @@ before_sleep = true    # 睡眠前锁屏；false 关闭此项
 状态栏启动时会尝试恢复仍在运行、但因托盘服务切换而丢失的活动图标。
 点击 Wi-Fi 或蓝牙可打开配置菜单；首次连接需要凭据的网络或配对设备会打开 Kitty 终端完成交互。
 Wi-Fi 菜单使用 iwd，蓝牙菜单使用 BlueZ；系统服务或适配器不可用时会显示 Unavailable。
-Wi-Fi 和蓝牙图标素材位于 `shell/assets/icons/`，通过 Qt5Compat GraphicalEffects 跟随主题颜色。
+Wi-Fi 和蓝牙图标使用 JetBrainsMono Nerd Font 的 Material 字形：Wi-Fi 按信号强度显示格数，蓝牙区分关闭 / 开启 / 已连接，颜色跟随主题。

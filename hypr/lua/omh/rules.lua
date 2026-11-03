@@ -4,7 +4,15 @@ return function(s)
 		name = "omh-shell-blur",
 		match = { namespace = "^omh-(bar|omnibox|themes|notifications)$" },
 		blur = true,
-		ignore_alpha = 0.3,
+		-- Below the bar's lowest opacity (0.2) so translucent segments stay blurred.
+		ignore_alpha = 0.1,
+	})
+
+	-- Video stays solid even when unfocused (themes may make inactive windows translucent).
+	hl.window_rule({
+		name = "omh-opaque-media",
+		match = { class = "^(mpv|vlc|org.videolan.VLC|celluloid|io.github.celluloid_player.Celluloid)$" },
+		opaque = true,
 	})
 
 	hl.window_rule({

@@ -26,7 +26,7 @@ Rectangle {
         anchors.centerIn: parent
         width: Math.min(implicitWidth, root.width - 22)
         elide: Text.ElideRight
-        text: NotificationStore.recent ? "🔔  " + (NotificationStore.preview || "New notification") : "🔔 Notifications"
+        text: NotificationStore.recent ? "\uf0f3  " + (NotificationStore.preview || "New notification") : "\uf0f3  Notifications"
         textFormat: Text.PlainText
         color: Theme.fg
         font.family: Theme.font

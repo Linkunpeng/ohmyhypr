@@ -30,10 +30,14 @@ class PaletteTests(unittest.TestCase):
     def test_bar_opacity_adapts_to_wallpaper_contrast(self):
         bright = palette.from_pixels(bytes([248, 248, 248] * 100), dark=True)
         dark = palette.from_pixels(bytes([8, 8, 8] * 100), dark=True)
-        self.assertEqual(dark["bar_opacity"], 0.38)
+        self.assertEqual(dark["bar_opacity"], palette.BAR_OPACITY_MIN)
         self.assertGreater(bright["bar_opacity"], dark["bar_opacity"])
         background = palette._mix((248, 248, 248), rgb(bright["bg"]), bright["bar_opacity"])
         self.assertGreaterEqual(palette.contrast(rgb(bright["fg"]), background), 4.5)
+
+        # Only the pixels behind the bar decide its opacity.
+        edge_dark = palette.from_pixels(bytes([248, 248, 248] * 100), dark=True, bar_data=bytes([8, 8, 8] * 10))
+        self.assertEqual(edge_dark["bar_opacity"], palette.BAR_OPACITY_MIN)
 
         light_theme = palette.from_pixels(bytes([8, 8, 8] * 100), dark=False)
         background = palette._mix((8, 8, 8), rgb(light_theme["bg"]), light_theme["bar_opacity"])

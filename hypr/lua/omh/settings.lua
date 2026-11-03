@@ -69,7 +69,7 @@ return function(root)
 				shadow = "rgba(181926ff)",
 			},
 			shape = { radius = 12, border = 2, gaps_in = 5, gaps_out = 10 },
-			effects = { blur = true, shadow = true, dim_inactive = false, animation = "smooth" },
+			effects = { blur = true, shadow = true, dim_inactive = false, animation = "smooth", active_opacity = 1.0, inactive_opacity = 1.0 },
 		},
 	}
 

@@ -30,6 +30,21 @@ return function(s)
 	hl.bind(M .. " + CTRL + K", hl.dsp.window.resize({ relative = true, x = 0, y = -step }), { repeating = true, description = "[group:窗口] 调整窗口大小 · 缩小高度" })
 	hl.bind(M .. " + CTRL + J", hl.dsp.window.resize({ relative = true, x = 0, y = step }), { repeating = true, description = "[group:窗口] 调整窗口大小 · 增加高度" })
 
+	-- Live gap tuning; a theme apply / config reload restores the theme's gaps.
+	local function gap(value)
+		return type(value) == "table" and value.top or value
+	end
+	local function set_gaps(inner, outer)
+		hl.config({ general = { gaps_in = math.max(0, inner), gaps_out = math.max(0, outer) } })
+	end
+	local function adjust_gaps(delta)
+		set_gaps(gap(hl.get_config("general.gaps_in")) + delta, gap(hl.get_config("general.gaps_out")) + delta * 2)
+	end
+	hl.bind(M .. " + equal", function() adjust_gaps(2) end, { repeating = true, description = "[group:窗口] 增大窗口间距" })
+	hl.bind(M .. " + minus", function() adjust_gaps(-2) end, { repeating = true, description = "[group:窗口] 减小窗口间距" })
+	hl.bind(M .. " + SHIFT + minus", function() set_gaps(0, 0) end, { description = "[group:窗口] 取消窗口间距" })
+	hl.bind(M .. " + SHIFT + equal", function() set_gaps(s.theme.shape.gaps_in, s.theme.shape.gaps_out) end, { description = "[group:窗口] 恢复主题间距" })
+
 	-- code:10..19 are the 1..0 keys, independent of keyboard layout.
 	for i = 1, 10 do
 		local code = "code:" .. (9 + i)

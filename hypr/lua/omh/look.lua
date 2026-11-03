@@ -27,6 +27,10 @@ return function(s)
 
 		decoration = {
 			rounding = shape.radius,
+			-- Focused windows stay solid; the rest let the blurred wallpaper through.
+			active_opacity = fx.active_opacity,
+			inactive_opacity = fx.inactive_opacity,
+			fullscreen_opacity = 1.0,
 			dim_inactive = fx.dim_inactive,
 			dim_strength = 0.12,
 			shadow = {

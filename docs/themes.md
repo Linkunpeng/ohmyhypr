@@ -34,7 +34,7 @@ omh theme apply <id>
 | `[palette]` | `bg` `surface` `fg` `muted` `accent` `accent_alt` `urgent` `border_active` `border_inactive`（`#rrggbb[aa]`，也可以写其他键名作引用，如 `"accent"`）、`opacity`（面板不透明度）、`bar_opacity`（可选，状态栏不透明度） |
 | `[shape]` | `radius`（窗口和面板圆角）、`border`、`gaps_in`、`gaps_out`、`bar` = `floating` \| `docked`、`bar_position` = `top` \| `bottom`、`bar_height`、`widget` = `pill` \| `rounded` \| `square` |
 | `[font]` | `ui`、`mono`、`size` |
-| `[effects]` | `blur`、`shadow`、`dim_inactive`、`animation` = `smooth` \| `snappy` \| `none` |
+| `[effects]` | `blur`、`shadow`、`dim_inactive`、`active_opacity` / `inactive_opacity`（焦点 / 非焦点窗口不透明度，默认 1.0）、`animation` = `smooth` \| `snappy` \| `none` |
 | `[hooks]` | `apply = ["shell 命令", …]`，用来同步 kitty、GTK 等外部程序 |
 
 壁纸取色会根据图像亮度和文字颜色自动计算 `bar_opacity`：浅色背景下提高不透明度，
@@ -44,7 +44,7 @@ omh theme apply <id>
 
 | 主题 | 风格 |
 |---|---|
-| `moonlantern` | 月灯（默认）：墨绿青灰、方正控件、贴边 bar |
+| `moonlantern` | 月灯（默认）：墨绿青灰、大圆角窗口、非焦点窗口半透明、贴边 bar |
 | `sandrone` | 木偶：黄铜与绯红、直角控件、贴边 bar |
 | `midnight` | 冷色玻璃、悬浮胶囊 bar |
 | `porcelain` | 浅色、底部 bar |

@@ -2,7 +2,7 @@
 
 [meta]
 name = "月灯 Moon Lantern"
-description = "夜色寒塘与月牙灯；墨绿青灰，方正控件，贴边状态栏"
+description = "夜色寒塘与月牙灯；墨绿青灰，大圆角窗口，贴边状态栏"
 dark = true
 
 [wallpaper]
@@ -22,10 +22,10 @@ urgent = "#e34c55"
 border_active = "accent"
 border_inactive = "#3a3c3c"
 opacity = 0.86
-bar_opacity = 0.38
+bar_opacity = 0.27
 
 [shape]
-radius = 4
+radius = 16
 border = 2
 gaps_in = 4
 gaps_out = 8
@@ -43,4 +43,6 @@ size = 13
 blur = true
 shadow = true
 dim_inactive = true
+active_opacity = 1.0
+inactive_opacity = 0.85
 animation = "snappy"
