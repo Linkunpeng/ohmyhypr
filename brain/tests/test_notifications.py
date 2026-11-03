@@ -41,8 +41,12 @@ with tempfile.TemporaryDirectory(prefix="omh-notify-test-") as temporary:
             raise RuntimeError("notification IPC not ready: " + result.stderr)
         command = ["qs", "ipc", "-p", str(root), "call", "notifications"]
         if nested:
-            names = subprocess.check_output(["busctl", "--user", "list"], env=env, text=True)
-            assert "org.freedesktop.Notifications" not in names
+            # Ask for an owner, not `busctl list`: that also lists activatable names
+            # (e.g. from an installed swaync / mako D-Bus service file).
+            owned = subprocess.check_output(["busctl", "--user", "call", "org.freedesktop.DBus", "/org/freedesktop/DBus",
+                                             "org.freedesktop.DBus", "NameHasOwner", "s", "org.freedesktop.Notifications"],
+                                            env=env, text=True).strip()
+            assert owned == "b false", owned
         else:
             first = subprocess.check_output(["notify-send", "-p", "-a", "omh-test", "First", "Body"], env=env, text=True).strip()
             subprocess.check_output(["notify-send", "-p", "-a", "omh-test", "Second", "Body"], env=env, text=True)
