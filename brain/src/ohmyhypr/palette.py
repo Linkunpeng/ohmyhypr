@@ -53,6 +53,31 @@ def _readable(color: tuple[int, int, int], background: tuple[int, int, int], dar
     return _mix(color, target, high)
 
 
+def _bar_opacity(histogram: Counter, background: tuple[int, int, int], foreground: tuple[int, int, int],
+                 dark: bool) -> float:
+    # Protect text against the brightest (or darkest for a light theme) 5% of
+    # the wallpaper, while allowing dark wallpapers to retain transparency.
+    ranked = sorted(histogram, key=_luminance, reverse=dark)
+    threshold = max(1, math.ceil(sum(histogram.values()) * 0.05))
+    count = 0
+    behind = ranked[0]
+    for color in ranked:
+        count += histogram[color]
+        behind = color
+        if count >= threshold:
+            break
+    low, high = 0.38, 0.85
+    if contrast(foreground, _mix(behind, background, low)) >= 4.5:
+        return low
+    for _ in range(12):
+        middle = (low + high) / 2
+        if contrast(foreground, _mix(behind, background, middle)) >= 4.5:
+            high = middle
+        else:
+            low = middle
+    return min(0.85, math.ceil(high * 100) / 100)
+
+
 def from_pixels(data: bytes, dark: bool = True, opacity: float = 0.78) -> dict[str, Any]:
     if not data or len(data) % 3:
         raise PaletteError("image produced no valid RGB pixels")
@@ -80,7 +105,7 @@ def from_pixels(data: bytes, dark: bool = True, opacity: float = 0.78) -> dict[s
         "accent": _hex(accent), "accent_alt": _hex(accent_alt),
         "urgent": _hex(_readable((225, 67, 76), surface, dark)),
         "border_active": _hex(accent), "border_inactive": _hex(_mix(bg, fg, 0.25)),
-        "opacity": opacity,
+        "opacity": opacity, "bar_opacity": _bar_opacity(histogram, bg, fg, dark),
     }
 
 
@@ -130,5 +155,10 @@ def apply_file(path: Path) -> dict[str, Any]:
         if isinstance(opacity, bool) or not isinstance(opacity, (int, float)) or not 0 <= opacity <= 1:
             raise PaletteError("palette opacity must be between 0 and 1")
         t["palette"] = {**{key: raw[key] for key in keys}, "opacity": opacity}
+        if "bar_opacity" in raw:
+            bar_opacity = raw["bar_opacity"]
+            if isinstance(bar_opacity, bool) or not isinstance(bar_opacity, (int, float)) or not 0 <= bar_opacity <= 1:
+                raise PaletteError("palette bar_opacity must be between 0 and 1")
+            t["palette"]["bar_opacity"] = bar_opacity
         t["palette_source"] = "file"
         return theme.publish(t)

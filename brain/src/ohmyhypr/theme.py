@@ -100,7 +100,10 @@ def resolve(theme_id: str) -> dict[str, Any]:
         if isinstance(value, str) and value in pal and key != value:
             pal[key] = pal[value]  # allow references like border_active = "accent"
     for key, value in pal.items():
-        if key != "opacity" and not HEX.match(str(value)):
+        if key == "bar_opacity":
+            if isinstance(value, bool) or not isinstance(value, (int, float)) or not 0 <= value <= 1:
+                raise ThemeError(f"{path}: palette.bar_opacity must be between 0 and 1")
+        elif key != "opacity" and not HEX.match(str(value)):
             raise ThemeError(f"{path}: palette.{key} must be #rrggbb[aa], got {value!r}")
     pal["bg_rgba"] = _rgba(pal["bg"], pal["opacity"])
 

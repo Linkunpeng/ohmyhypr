@@ -31,7 +31,6 @@
 | omhd 守护进程 | `brain/` | M1 | 常驻进程：事件订阅、上下文缓存、socket RPC、systemd user service |
 | MCP server | `brain/` | M3 | 把 Desktop Tools 暴露给 Agent |
 | Theme engine | `brain/src/ohmyhypr/theme.py`、`themes/` | ✅ | theme.toml → theme.json（Shell）+ theme.lua（Hyprland），见 [themes.md](themes.md) |
-| Avatar 接口 | `brain/src/ohmyhypr/avatar/` | ✅ | 通过 Unix socket 对接独立的模型适配器，见 [avatar.md](avatar.md) |
 
 ## 关键约定
 

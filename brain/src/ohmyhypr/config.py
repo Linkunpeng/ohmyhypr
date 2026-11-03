@@ -14,7 +14,6 @@ DEFAULTS: dict[str, Any] = {
     "providers": {},
     "wallpaper": {"directory": "~/Pictures/wallpapers"},
     "lock": {"timeout_seconds": 600, "before_sleep": True},
-    "avatar": {"command": [], "socket": "", "model": ""},
 }
 
 

@@ -1,8 +1,8 @@
 return function(s)
-	-- Blur behind every ohmyhypr shell surface (Quickshell sets the namespace).
+	-- Blur visible panels, but not the full-screen notification dismiss surface.
 	hl.layer_rule({
 		name = "omh-shell-blur",
-		match = { namespace = "^omh-(bar|omnibox|themes)$" },
+		match = { namespace = "^omh-(bar|omnibox|themes|notifications)$" },
 		blur = true,
 		ignore_alpha = 0.3,
 	})

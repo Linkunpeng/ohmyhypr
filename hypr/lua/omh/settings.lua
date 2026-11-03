@@ -52,7 +52,6 @@ return function(root)
 		omh = repo .. "bin/omh",
 		-- Applied on first start when no theme has been chosen yet.
 		default_theme = "sandrone",
-		avatar = true, -- start the optional configured avatar adapter
 
 		-- Monitors used when local.lua does not define any.
 		monitors = {

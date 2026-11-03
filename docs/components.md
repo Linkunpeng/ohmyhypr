@@ -22,7 +22,9 @@
 | 文件管理器 | Thunar（`thunar`） | `Super+E` | [settings.lua](../hypr/lua/omh/settings.lua)：`files` |
 | 浏览器 | Chromium（`chromium`） | `Super+B`；不设置系统默认浏览器 | [settings.lua](../hypr/lua/omh/settings.lua)：`browser` |
 | 应用启动器 | Rofi（`rofi -show drun`） | `Super+D`；与 `Super+Space` 的 Omnibox 是两个独立入口 | [settings.lua](../hypr/lua/omh/settings.lua)：`launcher` |
-| 通知服务 | ORBIT 通知中心或 SwayNotificationCenter（`swaync`） | 状态栏中间的「通知」打开现有通知中心；ORBIT 旧版本需在任务中心选择「通知」标签 | [notification-center.sh](../scripts/notification-center.sh)、[autostart.lua](../hypr/lua/omh/autostart.lua) |
+| 通知服务 | Quickshell | 状态栏中间的 Notifications 打开通知历史；新通知在状态栏短暂显示预览 | [NotificationStore.qml](../shell/services/NotificationStore.qml)、[NotificationCenter.qml](../shell/notifications/NotificationCenter.qml) |
+| Wi-Fi | iwd、`busctl`、`iwctl` | 状态栏显示连接状态；点击可开关、扫描和连接网络 | [connectivity.py](../brain/src/ohmyhypr/connectivity.py) |
+| 蓝牙 | BlueZ、`busctl`、`bluetoothctl` | 状态栏显示连接状态；点击可开关、扫描和管理设备 | [connectivity.py](../brain/src/ohmyhypr/connectivity.py) |
 | 发送通知 | `notify-send` | Shell 用它发送通知，由通知服务显示 | [Omh.qml](../shell/services/Omh.qml) |
 | 锁屏与空闲管理 | hyprlock、hypridle、`loginctl` | `Alt+L` 锁屏；非嵌套会话按配置空闲或睡眠前锁屏 | [lockscreen.py](../brain/src/ohmyhypr/lockscreen.py)、[配置示例](../config/ohmyhypr.example.toml) |
 | 壁纸与取色 | Quickshell、`ffmpeg` | `Super+Shift+W` 选择壁纸；生成的配色同步到 Quickshell 和 Hyprland | [appearance.md](appearance.md)、[palette.py](../brain/src/ohmyhypr/palette.py) |
@@ -32,10 +34,9 @@
 | 媒体播放 | playerctl | 媒体键控制播放、上一首和下一首 | [binds.lua](../hypr/lua/omh/binds.lua) |
 | Qt 主题 | qt6ct | 设置 `QT_QPA_PLATFORMTHEME`，具体主题需在外部配置 | [env.lua](../hypr/lua/omh/env.lua) |
 
-本机 ORBIT 通知中心使用 `notifications` IPC 目标；例如
-`qs ipc -p ~/.config/quickshell call notifications closeCenter` 可收起通知浮窗。
-浮窗、通知历史和此 IPC 服务由独立的 ORBIT Quickshell 提供，不包含在本仓库；
-状态栏通知预览需要该服务支持 `notifications status`，旧版 ORBIT 或 swaync 只能打开现有面板。
+通知中心使用 `notifications` IPC 目标；例如
+在仓库目录运行 `qs ipc -p "$PWD/shell" call notifications closeCenter` 可收起通知浮窗。
+通知历史最多保留 50 条，存于内存中，Shell 重载或退出后可能清空；嵌套开发会话不会接管系统通知。
 
 终端、文件管理器、浏览器和启动器可通过 gitignored 的 `hypr/lua/omh/local.lua` 覆盖；
 模板见 [local.example.lua](../hypr/lua/omh/local.example.lua)。空闲锁屏策略由 `config.toml` 的 `[lock]` 配置；其余服务目前在对应模块中直接指定。
@@ -46,16 +47,12 @@
 | 用途 | 组件 / 接口 | 状态与配置 |
 |---|---|---|
 | AI 模型 | OpenAI 或 Anthropic 兼容 HTTP API | 已接入；通过用户配置提供 URL、模型和可选密钥，本地与远端使用相同接口。见 [配置示例](../config/ohmyhypr.example.toml) |
-| 3D 形象 | 外部形象适配器 | 可选；通过 Unix socket 接口接入，具体渲染和依赖由适配器管理。见 [形象接口](avatar.md) |
 | 截图与标注 | `slurp`、`grim`、`satty`、`wl-copy`、`xdg-user-dir` | `Super+Shift+S` 框选后进入 Satty；Enter 复制，支持标注和保存到 Pictures/Screenshots。见 [screenshot.sh](../scripts/screenshot.sh)；AI Screen Ask 仍待实现 |
 | 模拟输入 | `wtype` | `doctor` 可检查；作为未来输入能力的候选，当前未接入实际操作流程 |
 
-参考形象适配器 `ohmyavatar` 使用 GTK3、WebKit2GTK 4.1、gtk-layer-shell、系统 Python、
-Babylon.js 和 babylon-mmd；这些是该独立适配器的依赖，不是 `ohmyhypr` 本体的硬依赖。
-
 ## 检查与维护
 
-- `make doctor` 当前检查 `Hyprland`、`hyprctl`、`qs`、`wl-paste`、`grim`、`slurp`、`satty`、`wl-copy`、`xdg-user-dir`、`cliphist`、`wtype`、`notify-send`、`ffmpeg`、`hyprlock`、`hypridle`、`loginctl`，并检查 AI 提供商配置及已配置的形象适配器命令。它不检查表中的所有应用、服务状态或 API 连通性。
+- `make doctor` 当前检查 `Hyprland`、`hyprctl`、`qs`、`wl-paste`、`grim`、`slurp`、`satty`、`wl-copy`、`xdg-user-dir`、`cliphist`、`wtype`、`notify-send`、`ffmpeg`、`hyprlock`、`hypridle`、`loginctl`、`busctl`、`iwctl` 和 `bluetoothctl`，并检查 AI 提供商配置。它不检查表中的所有应用、服务状态或 API 连通性。
 - `make verify` 校验 Hyprland 配置、Python、接口测试和主题；它不启动桌面，也不验证通知、音频等服务是否运行。
 - 添加或替换组件时，记录用途、实际调用方式、配置位置以及是否已实现；需要自动检查的依赖应同时更新 [doctor.py](../brain/src/ohmyhypr/doctor.py)。
 

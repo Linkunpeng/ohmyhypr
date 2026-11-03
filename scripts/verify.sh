@@ -9,7 +9,7 @@ echo "    $out"
 [[ "$out" == "config ok" ]]
 
 echo "==> brain: py_compile"
-python3 -m py_compile "$REPO"/brain/src/ohmyhypr/*.py "$REPO"/brain/src/ohmyhypr/avatar/*.py
+python3 -m py_compile "$REPO"/brain/src/ohmyhypr/*.py
 echo "    ok"
 
 echo "==> brain: provider tests"

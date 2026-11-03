@@ -31,10 +31,6 @@ return function(s)
 	hl.bind(M .. " + SHIFT + T", shell("themes"), { description = "[group:桌面] 选择主题" })
 	hl.bind(M .. " + ALT + T", hl.dsp.exec_cmd(s.omh .. " theme next"), { description = "[group:桌面] 切换下一个主题" })
 
-	-- Avatar: show/hide, talk to her
-	hl.bind(M .. " + Y", hl.dsp.exec_cmd(s.omh .. " avatar toggle"))
-	hl.bind(M .. " + SHIFT + Y", hl.dsp.exec_cmd(s.omh .. " avatar chat"))
-
 	-- Feed desktop events to the brain once omhd exists (M1).
 	-- hl.on("window.active", function(w) ... end)
 end

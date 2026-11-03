@@ -14,9 +14,6 @@ return function(s)
 			hl.exec_cmd(s.omh .. " theme apply " .. s.default_theme)
 		end
 		hl.exec_cmd("qs -p " .. s.shell_dir)
-		if s.avatar then
-			hl.exec_cmd(s.omh .. " avatar run --detach")
-		end
 
 		if nested then
 			return
@@ -24,7 +21,6 @@ return function(s)
 
 		hl.exec_cmd("dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP OHMYHYPR_ROOT")
 		hl.exec_cmd("systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP OHMYHYPR_ROOT")
-		hl.exec_cmd("swaync")
 		hl.exec_cmd(string.format("%q idle", s.omh))
 		hl.exec_cmd("fcitx5")
 		hl.exec_cmd("wl-paste --type text --watch cliphist store")

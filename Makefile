@@ -1,8 +1,8 @@
 REPO := $(abspath .)
 
-.PHONY: verify dev shell doctor ctx install-cli avatar-run themes
+.PHONY: verify dev shell doctor ctx install-cli themes
 
-verify:        ## static checks: Lua config, Python, adapter protocol, themes
+verify:        ## static checks: Lua config, Python, tests, themes
 	@scripts/verify.sh
 
 dev:           ## nested Hyprland running this repo's config
@@ -19,9 +19,6 @@ ctx:           ## print current desktop context
 
 install-cli:   ## put `omh` on PATH (editable)
 	uv tool install --editable ./brain
-
-avatar-run:    ## start the avatar on the current desktop
-	@bin/omh avatar run --detach
 
 themes:        ## list themes
 	@bin/omh theme list

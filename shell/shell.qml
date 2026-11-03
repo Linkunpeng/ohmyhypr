@@ -9,13 +9,17 @@ import QtQuick
 import Quickshell
 import Quickshell.Hyprland
 import "bar"
+import "connectivity"
 import "omnibox"
+import "notifications"
 import "services"
 import "shortcuts"
 import "themes"
 import "wallpaper"
 
 ShellRoot {
+    // Initialize the notification server even before the first bar is visible.
+    property var notificationService: NotificationStore
     Variants {
         model: Quickshell.screens
         delegate: Wallpaper {}
@@ -24,6 +28,26 @@ ShellRoot {
     Variants {
         model: Quickshell.screens
         delegate: Bar {}
+    }
+
+    Variants {
+        model: Quickshell.screens
+        delegate: NotificationDismiss {}
+    }
+
+    Variants {
+        model: Quickshell.screens
+        delegate: NotificationCenter {}
+    }
+
+    Variants {
+        model: Quickshell.screens
+        delegate: ConnectivityDismiss {}
+    }
+
+    Variants {
+        model: Quickshell.screens
+        delegate: ConnectivityMenu {}
     }
 
     Omnibox {}

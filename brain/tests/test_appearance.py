@@ -27,6 +27,18 @@ class PaletteTests(unittest.TestCase):
         with self.assertRaises(palette.PaletteError):
             palette.from_pixels(b'')
 
+    def test_bar_opacity_adapts_to_wallpaper_contrast(self):
+        bright = palette.from_pixels(bytes([248, 248, 248] * 100), dark=True)
+        dark = palette.from_pixels(bytes([8, 8, 8] * 100), dark=True)
+        self.assertEqual(dark["bar_opacity"], 0.38)
+        self.assertGreater(bright["bar_opacity"], dark["bar_opacity"])
+        background = palette._mix((248, 248, 248), rgb(bright["bg"]), bright["bar_opacity"])
+        self.assertGreaterEqual(palette.contrast(rgb(bright["fg"]), background), 4.5)
+
+        light_theme = palette.from_pixels(bytes([8, 8, 8] * 100), dark=False)
+        background = palette._mix((8, 8, 8), rgb(light_theme["bg"]), light_theme["bar_opacity"])
+        self.assertGreaterEqual(palette.contrast(rgb(light_theme["fg"]), background), 4.5)
+
 
 class AppearanceTests(unittest.TestCase):
     def setUp(self):
@@ -86,6 +98,7 @@ class AppearanceTests(unittest.TestCase):
         self.assertEqual(after["wallpaper"], before["wallpaper"])
         self.assertEqual(after["shape"], before["shape"])
         self.assertEqual(after["palette"]["accent"], colors["accent"])
+        self.assertEqual(after["palette"]["bar_opacity"], colors["bar_opacity"])
         self.assertEqual(palette.current()["source"], "file")
 
     def test_bad_file_urls_are_rejected(self):

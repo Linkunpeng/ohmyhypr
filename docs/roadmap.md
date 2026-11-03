@@ -7,7 +7,6 @@
 - [x] `omh doctor` / `omh ctx` / `omh ask`（OpenAI / Anthropic 兼容 API）
 - [ ] 在嵌套会话 `make dev` 中完成日常可用性验证（截图、锁屏、媒体键）
 - [x] 主题系统：`theme.toml` → 壁纸、配色、形状、bar、字体、特效一键切换；主题面板
-- [x] 3D 形象：通过接口接入独立适配器，读取人物设定及触发可选动作
 - [x] 切换脚本 `scripts/switch.sh`：接管 `~/.config/hypr`，带备份和回滚
 - [x] 壁纸自动取色并同步 Hyprland、Quickshell 和锁屏
 - [ ] kitty / GTK 的主题 hooks 模板
@@ -31,15 +30,9 @@
 - [ ] AI Sidebar
 
 ## M4 · Voice & Memory
-- [ ] Push-to-talk：ASR → 命令 / 听写；TTS 朗读，形象做口型同步
+- [ ] Push-to-talk：ASR → 命令 / 听写；TTS 朗读
 - [ ] 活动时间线（opt-in、本地）+ 语义检索
 - [ ] 剪贴板语义搜索
-
-## Avatar 后续
-- [ ] 骨骼级呼吸 / 头部看向光标
-- [ ] VRM / glTF pack
-- [ ] 形象对 Agent 事件做出反应（任务完成、等待审批）
-- [ ] 指定显示器
 
 ## M5 · Self-configuring
 - [ ] 自然语言改配置：diff → verify → 确认 → reload → commit / 回滚

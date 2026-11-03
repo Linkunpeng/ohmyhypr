@@ -7,8 +7,7 @@ import json
 import sys
 from pathlib import Path
 
-from . import config, context, doctor, lockscreen, metrics, palette, providers, theme, wallpaper
-from .avatar import cli as avatar_cli
+from . import config, connectivity, context, doctor, lockscreen, metrics, palette, providers, theme, tray, wallpaper
 
 SYSTEM_PROMPT = """You are the assistant built into the user's Hyprland desktop (ohmyhypr).
 Answer concisely in the user's language. Markdown is rendered.
@@ -95,8 +94,6 @@ def main(argv: list[str] | None = None) -> int:
     ctx.add_argument("--no-context", dest="context", action="store_false", help="do not attach desktop context")
     p_ask.add_argument("--dry-run", action="store_true", help="print the request instead of sending")
 
-    avatar_cli.register(sub)
-
     p_theme = sub.add_parser("theme", help="list / apply desktop themes")
     th = p_theme.add_subparsers(dest="theme_cmd", required=True)
     th.add_parser("list", help="available themes").add_argument("--json", action="store_true")
@@ -127,12 +124,34 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("idle", help="run hypridle using the configured lock policy")
 
     sub.add_parser("metrics", help="local CPU, memory, temperature and volume counters").add_argument("--watch", action="store_true")
+    sub.add_parser("tray", help="recover active system tray items after the watcher starts")
+
+    p_connectivity = sub.add_parser("connectivity", help="inspect or configure Wi-Fi and Bluetooth")
+    con = p_connectivity.add_subparsers(dest="connectivity_cmd", required=True)
+    con.add_parser("status", help="report adapter state and available devices as JSON")
+    con_action = con.add_parser("action", help="control an adapter or connect a device")
+    con_action.add_argument("kind", choices=("wifi", "bluetooth"))
+    con_action.add_argument("operation", choices=("on", "off", "scan", "connect", "disconnect"))
+    con_action.add_argument("target", nargs="?", default="")
 
     args = parser.parse_args(argv)
     cfg = config.load()
 
     if args.cmd == "metrics":
         return metrics.run(args.watch)
+    if args.cmd == "tray":
+        tray.recover()
+        return 0
+    if args.cmd == "connectivity":
+        try:
+            if args.connectivity_cmd == "status":
+                print(json.dumps(connectivity.snapshot(), ensure_ascii=False))
+            else:
+                connectivity.action(args.kind, args.operation, args.target)
+            return 0
+        except connectivity.ConnectivityError as e:
+            print(str(e), file=sys.stderr)
+            return 1
     if args.cmd == "doctor":
         return doctor.run(cfg)
     if args.cmd == "ctx":
@@ -140,8 +159,6 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if args.cmd == "ask":
         return cmd_ask(args, cfg)
-    if args.cmd == "avatar":
-        return avatar_cli.run(args, cfg)
     if args.cmd == "theme":
         return cmd_theme(args)
     try:

@@ -14,6 +14,15 @@ PanelWindow {
     readonly property int inset: Math.max(8, Theme.gap)
     readonly property int segmentHeight: Math.max(36, Theme.barHeight)
     readonly property int segmentY: Theme.barBottom ? 0 : inset
+    property real borderAngle: 0
+
+    NumberAnimation on borderAngle {
+        from: 0
+        to: 360
+        duration: 12000
+        loops: Animation.Infinite
+        running: bar.visible
+    }
 
     anchors {
         top: !Theme.barBottom
@@ -33,6 +42,7 @@ PanelWindow {
 
     BarSegment {
         id: leftSegment
+        borderAngle: bar.borderAngle
         x: bar.inset
         y: bar.segmentY
         width: workspaces.implicitWidth + 28
@@ -46,6 +56,7 @@ PanelWindow {
 
     BarSegment {
         id: centerSegment
+        borderAngle: bar.borderAngle
         anchors.horizontalCenter: parent.horizontalCenter
         y: bar.segmentY
         width: centerRow.implicitWidth + 28
@@ -66,6 +77,7 @@ PanelWindow {
 
     BarSegment {
         id: rightSegment
+        borderAngle: bar.borderAngle
         anchors.right: parent.right
         anchors.rightMargin: bar.inset
         y: bar.segmentY
@@ -76,6 +88,8 @@ PanelWindow {
             anchors.centerIn: parent
             spacing: 16
             SystemStatus {}
+            ConnectivityButton { kind: "wifi"; screenName: bar.screen.name }
+            ConnectivityButton { kind: "bluetooth"; screenName: bar.screen.name }
             Rectangle {
                 visible: tray.itemCount > 0
                 width: 1

@@ -11,6 +11,7 @@ Item {
     readonly property int itemCount: icons.count
     implicitWidth: row.implicitWidth
     implicitHeight: 28
+    Component.onCompleted: TrayRecovery.schedule()
 
     Row {
         id: row

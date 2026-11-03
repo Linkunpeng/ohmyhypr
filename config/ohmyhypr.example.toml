@@ -27,12 +27,6 @@ timeout = 120
 # base_url = "http://127.0.0.1:1234/v1"
 # model = "my-model"
 
-[avatar]
-# Independent adapter process implementing docs/avatar.md. Leave empty to disable.
-command = []  # e.g. ["/path/to/ohmyavatar/bin/ohmyavatar"]
-# socket = "/run/user/1000/ohmyavatar/avatar.sock"  # optional, defaults to XDG_RUNTIME_DIR
-# model = "sandrone"  # optional adapter-specific model ID loaded at startup
-
 [lock]
 timeout_seconds = 600  # 0 disables idle locking
 before_sleep = true    # lock before suspend via hypridle and logind

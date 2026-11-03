@@ -25,6 +25,9 @@ BINARIES = {
     "hyprlock": False,
     "hypridle": False,
     "loginctl": False,
+    "busctl": False,
+    "iwctl": False,
+    "bluetoothctl": False,
 }
 
 
@@ -47,15 +50,6 @@ def run(cfg: dict[str, Any]) -> int:
         print(f" {OK} {'AI provider':<12} {name} ({provider['type']}, {provider['model']})")
     except (providers.ProviderError, ValueError) as e:
         print(f" {WARN} {'AI provider':<12} {e}")
-
-    command = cfg.get("avatar", {}).get("command", [])
-    if command:
-        import os
-        executable = os.path.expanduser(os.path.expandvars(command[0]))
-        found = shutil.which(executable)
-        print(f" {OK if found else WARN} {'avatar':<12} {found or 'adapter command not found'}")
-    else:
-        print(f" {WARN} {'avatar':<12} adapter not configured (optional)")
 
     print()
     print("all required dependencies present" if not failed else f"{failed} required missing")

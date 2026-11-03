@@ -31,11 +31,14 @@ omh theme apply <id>
 |---|---|
 | `[meta]` | `name`、`description`、`dark` |
 | `[wallpaper]` | `path`（`~` 或相对路径均可；缺失时用配色渐变）、`fit` = `cover` \| `contain` \| `center` |
-| `[palette]` | `bg` `surface` `fg` `muted` `accent` `accent_alt` `urgent` `border_active` `border_inactive`（`#rrggbb[aa]`，也可以写其他键名作引用，如 `"accent"`）、`opacity`（面板透明度） |
+| `[palette]` | `bg` `surface` `fg` `muted` `accent` `accent_alt` `urgent` `border_active` `border_inactive`（`#rrggbb[aa]`，也可以写其他键名作引用，如 `"accent"`）、`opacity`（面板不透明度）、`bar_opacity`（可选，状态栏不透明度） |
 | `[shape]` | `radius`（窗口和面板圆角）、`border`、`gaps_in`、`gaps_out`、`bar` = `floating` \| `docked`、`bar_position` = `top` \| `bottom`、`bar_height`、`widget` = `pill` \| `rounded` \| `square` |
 | `[font]` | `ui`、`mono`、`size` |
 | `[effects]` | `blur`、`shadow`、`dim_inactive`、`animation` = `smooth` \| `snappy` \| `none` |
 | `[hooks]` | `apply = ["shell 命令", …]`，用来同步 kitty、GTK 等外部程序 |
+
+壁纸取色会根据图像亮度和文字颜色自动计算 `bar_opacity`：浅色背景下提高不透明度，
+深色背景下保留更多透明感。手动应用包含该字段的配色文件时使用文件中的值。
 
 内置主题：
 
@@ -45,7 +48,6 @@ omh theme apply <id>
 | `midnight` | 冷色玻璃、悬浮胶囊 bar |
 | `porcelain` | 浅色、底部 bar |
 
-形象由独立适配器管理，主题切换不再切换或隐藏模型；参见 [形象接口](avatar.md)。
 
 状态栏使用左、中、右三段独立悬浮布局，段间透明区域可点击下方窗口。
 位置由 `[shape] bar_position` 控制；`bar` 为旧主题兼容字段，现有主题统一使用三段布局。
