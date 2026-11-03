@@ -61,6 +61,11 @@ Singleton {
         return Math.min(widgetRadius, height / 2);
     }
 
+    // Like widgetCorner, but never square: small chips stay soft in square themes.
+    function softCorner(height: real): real {
+        return Math.max(widgetCorner(height), Math.round(height * 0.32));
+    }
+
     FileView {
         path: root.statePath
         watchChanges: true

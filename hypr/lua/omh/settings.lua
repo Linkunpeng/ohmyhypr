@@ -51,7 +51,7 @@ return function(root)
 		-- ohmyhypr CLI, run straight from this checkout.
 		omh = repo .. "bin/omh",
 		-- Applied on first start when no theme has been chosen yet.
-		default_theme = "sandrone",
+		default_theme = "moonlantern",
 
 		-- Monitors used when local.lua does not define any.
 		monitors = {

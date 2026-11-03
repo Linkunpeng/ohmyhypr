@@ -23,7 +23,7 @@ make dev           # 嵌套 Hyprland 窗口里试用，不影响当前桌面
 bin/omh wallpaper set ~/Pictures/wallpaper.jpg  # 更换壁纸并生成配色
 bin/omh lock       # 手动锁屏
 
-bin/omh theme apply sandrone        # 一键换主题（bin/omh 直接从仓库运行，无需安装）
+bin/omh theme apply moonlantern     # 一键换主题（bin/omh 直接从仓库运行，无需安装）
 omh ctx            # 当前桌面上下文（JSON）
 omh ask "这段报错什么意思"          # 默认提供商，不附带桌面上下文
 omh ask --provider anthropic "帮我设计一个方案"

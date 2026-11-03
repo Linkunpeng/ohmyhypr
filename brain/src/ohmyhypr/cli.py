@@ -168,7 +168,7 @@ def main(argv: list[str] | None = None) -> int:
             elif args.wallpaper_cmd == "list":
                 print(json.dumps(wallpaper.catalog(cfg, args.screen), ensure_ascii=False))
             elif args.wallpaper_cmd == "reset":
-                return _appearance_report(theme.apply((theme.current() or {}).get("id", "sandrone")))
+                return _appearance_report(theme.apply((theme.current() or {}).get("id", theme.DEFAULT_ID)))
             else:
                 print(json.dumps((theme.current() or {}).get("wallpaper", {}), ensure_ascii=False))
             return 0

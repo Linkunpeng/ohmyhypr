@@ -4,7 +4,7 @@
 
 ```bash
 omh theme list            # * 标出当前主题
-omh theme apply sandrone  # 一键切换
+omh theme apply moonlantern  # 一键切换
 omh theme next            # 切到下一个（Super+Alt+T）
 ```
 
@@ -44,6 +44,7 @@ omh theme apply <id>
 
 | 主题 | 风格 |
 |---|---|
+| `moonlantern` | 月灯（默认）：墨绿青灰、方正控件、贴边 bar |
 | `sandrone` | 木偶：黄铜与绯红、直角控件、贴边 bar |
 | `midnight` | 冷色玻璃、悬浮胶囊 bar |
 | `porcelain` | 浅色、底部 bar |

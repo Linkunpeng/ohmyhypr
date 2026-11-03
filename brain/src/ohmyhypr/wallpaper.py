@@ -27,7 +27,7 @@ def set_wallpaper(value: str, fit: str | None = None, screen: str | None = None)
     if screen and screen not in {m["name"] for m in monitors()}:
         raise WallpaperError(f"screen is not connected: {screen}")
     with theme.state_lock():
-        t = theme.current() or theme.resolve("sandrone")
+        t = theme.current() or theme.resolve(theme.DEFAULT_ID)
         try:
             colors = palette.extract(path, t["meta"]["dark"], t["palette"]["opacity"])
         except palette.PaletteError as e:

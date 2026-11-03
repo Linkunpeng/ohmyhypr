@@ -54,6 +54,9 @@ DEFAULTS: dict[str, Any] = {
     "hooks": {"apply": []},
 }
 
+# Applied when no theme has been chosen yet (keep in sync with hypr settings.lua).
+DEFAULT_ID = "moonlantern"
+
 HEX = re.compile(r"^#([0-9a-fA-F]{6})([0-9a-fA-F]{2})?$")
 
 

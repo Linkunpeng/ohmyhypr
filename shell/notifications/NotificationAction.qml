@@ -10,8 +10,9 @@ Rectangle {
     signal clicked()
     implicitWidth: label.implicitWidth + 18
     implicitHeight: 26
-    radius: 6
+    radius: height / 2
     color: pointer.containsMouse ? accent : background
+    Behavior on color { ColorAnimation { duration: 150 } }
     border.width: 1
     border.color: accent
     Text {

@@ -150,7 +150,7 @@ def apply_file(path: Path) -> dict[str, Any]:
     ):
         raise PaletteError("palette must contain all color fields as #rrggbb values")
     with theme.state_lock():
-        t = theme.current() or theme.resolve("sandrone")
+        t = theme.current() or theme.resolve(theme.DEFAULT_ID)
         opacity = raw.get("opacity", t["palette"]["opacity"])
         if isinstance(opacity, bool) or not isinstance(opacity, (int, float)) or not 0 <= opacity <= 1:
             raise PaletteError("palette opacity must be between 0 and 1")

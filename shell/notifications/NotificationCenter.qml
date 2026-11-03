@@ -30,7 +30,7 @@ PanelWindow {
     readonly property color muted: palette.muted ?? "#6e738d"
     readonly property color accent: palette.accent ?? "#8aadf4"
     readonly property string fontFamily: appearance.font?.ui ?? "Noto Sans CJK SC"
-    readonly property int cornerRadius: Math.max(8, appearance.shape?.radius ?? 12)
+    readonly property int cornerRadius: Math.max(14, appearance.shape?.radius ?? 14)
 
     FileView {
         path: (Quickshell.env("XDG_STATE_HOME") || Quickshell.env("HOME") + "/.local/state") + "/ohmyhypr/theme.json"
@@ -82,8 +82,9 @@ PanelWindow {
                 Rectangle {
                     implicitWidth: 28
                     implicitHeight: 28
-                    radius: 6
+                    radius: height / 2
                     color: closeArea.containsMouse ? panel.surface : "transparent"
+                    Behavior on color { ColorAnimation { duration: 150 } }
                     Text { anchors.centerIn: parent; text: "×"; color: panel.foreground; font.pixelSize: 22 }
                     MouseArea {
                         id: closeArea
@@ -109,12 +110,15 @@ PanelWindow {
                     property bool expanded: false
                     width: noticeList.width
                     height: content.implicitHeight + 24
-                    radius: panel.cornerRadius
+                    radius: panel.cornerRadius - 4
                     color: panel.surface
                     border.width: 1
-                    border.color: Qt.rgba(panel.accent.r, panel.accent.g, panel.accent.b, 0.3)
+                    border.color: Qt.rgba(panel.accent.r, panel.accent.g, panel.accent.b, cardArea.containsMouse ? 0.6 : 0.25)
+                    Behavior on border.color { ColorAnimation { duration: 150 } }
                     MouseArea {
+                        id: cardArea
                         anchors.fill: parent
+                        hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
                         onClicked: card.expanded = !card.expanded
                     }

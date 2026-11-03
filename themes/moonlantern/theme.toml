@@ -1,0 +1,46 @@
+# 月灯 · Moon Lantern — a crescent lantern over a dark jade pond; ink and moonlit grey.
+
+[meta]
+name = "月灯 Moon Lantern"
+description = "夜色寒塘与月牙灯；墨绿青灰，方正控件，贴边状态栏"
+dark = true
+
+[wallpaper]
+# Not shipped (personal artwork); missing → palette gradient. The palette below is
+# what extraction yields from this image, so the fallback keeps the same colors.
+path = "~/Pictures/wallpapers/moon-lantern.png"
+fit = "cover"
+
+[palette]
+bg = "#010303"
+surface = "#181a1a"
+fg = "#e6e6e6"
+muted = "#8f9090"
+accent = "#728585"
+accent_alt = "#818189"
+urgent = "#e34c55"
+border_active = "accent"
+border_inactive = "#3a3c3c"
+opacity = 0.86
+bar_opacity = 0.38
+
+[shape]
+radius = 4
+border = 2
+gaps_in = 4
+gaps_out = 8
+bar = "docked"
+bar_position = "top"
+bar_height = 32
+widget = "square"
+
+[font]
+ui = "Noto Serif CJK SC"
+mono = "JetBrainsMono Nerd Font"
+size = 13
+
+[effects]
+blur = true
+shadow = true
+dim_inactive = true
+animation = "snappy"
