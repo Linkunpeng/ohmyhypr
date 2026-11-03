@@ -52,18 +52,25 @@ AI 配置：复制 [config/ohmyhypr.example.toml](config/ohmyhypr.example.toml) 
 
 | 键 | 动作 | 状态 |
 |---|---|---|
+| `Alt+K` | 全部快捷键速查表 | ✅ |
+| `Alt+B` | 显示 / 隐藏状态栏 | ✅ |
 | `Super+Space` | Omnibox：问任何事 / 让桌面做事 | 雏形 |
 | `Super+Shift+S` | 框选截图 → Satty 标注 / 复制 / 保存 | ✅ |
 | `Super+.` | 对选中文本：翻译 / 解释 / 润色 | 规划中 |
 | `Super+A` | AI Sidebar | 规划中 |
 | 按住 `Super+V` | 语音 push-to-talk | 规划中 |
 | `Super+Shift+T` / `Super+Alt+T` | 主题面板 / 切到下一个主题 | ✅ |
-| `Super+Shift+W` / `Super+Shift+Escape` | 选择壁纸 / 锁屏 | ✅ |
+| `Super+Shift+W` / `Alt+L` | 选择壁纸 / 锁屏 | ✅ |
 | `Super+Y` / `Super+Shift+Y` | 显示或隐藏形象 / 打开对话（需配置适配器） | ✅ |
 | `Super+Return` / `Q` / `F` / `T` | 终端 / 关闭 / 全屏 / 浮动 | ✅ |
 | `Super+Shift+Return` | 显示 / 收起临时终端，保留终端会话 | ✅ |
-| `Super+HJKL`（+`Shift` / `Alt` / `Ctrl`） | 聚焦（移动 / 交换 / 调整大小） | ✅ |
+| `Super+HJKL`（+`Shift` / `Ctrl`） | 聚焦（移动 / 调整大小） | ✅ |
 | `Super+1..0`（+`Shift`） | 切换工作区（移动窗口到工作区） | ✅ |
+
+速查表从 Hyprland 当前已注册的绑定读取按键和 `description`。修改快捷键时在对应的
+`hypr/lua/omh/binds.lua` 或 `ai.lua` 中维护说明；说明开头用 `[group:分类名]` 指定分类，
+没有分类的本机自定义绑定会列在「其他」中。
+对 `code:` 形式的物理按键，由于当前 Hyprland 输出不包含键码，说明中用 `[key:…]` 提供显示名称。
 
 ## 文档
 

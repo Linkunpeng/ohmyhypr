@@ -60,7 +60,12 @@ class AppearanceTests(unittest.TestCase):
         self.assertEqual(standalone["colors"], after["palette"])
         self.assertEqual(standalone["rev"], after["rev"])
         self.assertIn(after["palette"]["accent"][1:] + "ff", paths.THEME_LUA.read_text())
-        self.assertIn(after["palette"]["accent"][1:] + "ff", lockscreen.lock_config())
+
+    def test_lock_uses_blurred_desktop_background(self):
+        config = lockscreen.lock_config()
+        self.assertIn("path = screenshot", config)
+        self.assertIn("blur_passes = 3", config)
+        self.assertIn("blur_size = 8", config)
 
     def test_failed_extraction_preserves_existing_state(self):
         theme.apply("midnight")

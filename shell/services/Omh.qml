@@ -12,6 +12,7 @@ Singleton {
     property bool omniboxOpen: false
     property bool themePickerOpen: false
     property bool wallpaperPickerOpen: false
+    property bool barHidden: false
     property string wallpaperTargetScreen: ""
 
     function toggleWallpaperPicker(): void {

@@ -11,6 +11,7 @@ import Quickshell.Hyprland
 import "bar"
 import "omnibox"
 import "services"
+import "shortcuts"
 import "themes"
 import "wallpaper"
 
@@ -30,6 +31,22 @@ ShellRoot {
     ThemePicker {}
 
     WallpaperPicker {}
+
+    ShortcutGuide { id: shortcutGuide }
+
+    GlobalShortcut {
+        appid: "ohmyhypr"
+        name: "toggle-bar"
+        description: "Toggle status bar"
+        onPressed: Omh.barHidden = !Omh.barHidden
+    }
+
+    GlobalShortcut {
+        appid: "ohmyhypr"
+        name: "shortcuts"
+        description: "Shortcut guide"
+        onPressed: shortcutGuide.open = !shortcutGuide.open
+    }
 
     GlobalShortcut {
         appid: "ohmyhypr"

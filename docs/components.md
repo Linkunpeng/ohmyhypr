@@ -23,7 +23,7 @@
 | 应用启动器 | Rofi（`rofi -show drun`） | `Super+D`；与 `Super+Space` 的 Omnibox 是两个独立入口 | [settings.lua](../hypr/lua/omh/settings.lua)：`launcher` |
 | 通知服务 | SwayNotificationCenter（`swaync`） | 非嵌套会话启动；接收桌面通知 | [autostart.lua](../hypr/lua/omh/autostart.lua) |
 | 发送通知 | `notify-send` | Shell 用它发送通知，由通知服务显示 | [Omh.qml](../shell/services/Omh.qml) |
-| 锁屏与空闲管理 | hyprlock、hypridle、`loginctl` | `Super+Shift+Escape` 锁屏；非嵌套会话按配置空闲或睡眠前锁屏 | [lockscreen.py](../brain/src/ohmyhypr/lockscreen.py)、[配置示例](../config/ohmyhypr.example.toml) |
+| 锁屏与空闲管理 | hyprlock、hypridle、`loginctl` | `Alt+L` 锁屏；非嵌套会话按配置空闲或睡眠前锁屏 | [lockscreen.py](../brain/src/ohmyhypr/lockscreen.py)、[配置示例](../config/ohmyhypr.example.toml) |
 | 壁纸与取色 | Quickshell、`ffmpeg` | `Super+Shift+W` 选择壁纸；生成的配色同步到 Quickshell 和 Hyprland | [appearance.md](appearance.md)、[palette.py](../brain/src/ohmyhypr/palette.py) |
 | 输入法 | Fcitx5（`fcitx5`） | 非嵌套会话启动，设置 `XMODIFIERS` | [autostart.lua](../hypr/lua/omh/autostart.lua)、[env.lua](../hypr/lua/omh/env.lua) |
 | 剪贴板 | wl-clipboard（`wl-paste`）、cliphist | Brain 可读取文本；非嵌套会话监听文本和图片并存入历史 | [context.py](../brain/src/ohmyhypr/context.py)、[autostart.lua](../hypr/lua/omh/autostart.lua) |

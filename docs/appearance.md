@@ -52,9 +52,9 @@ JSON 需要 `bg`、`surface`、`fg`、`muted`、`accent`、`accent_alt`、`urgen
 
 ## 锁屏
 
-- `Super+Shift+Escape` 或 `bin/omh lock` 使用 Hyprlock 锁屏。
+- `Alt+L` 或 `bin/omh lock` 使用 Hyprlock 锁屏。
 - 正常会话中的 hypridle 默认在空闲 600 秒后请求锁屏，并在系统睡眠前请求锁屏；嵌套开发会话不会启动 hypridle。
-- 锁屏使用当前配色及纯色背景，避免在锁屏尚未绘制时透出桌面。解锁使用系统的 Hyprlock/PAM 配置。
+- 锁屏使用当前桌面的模糊截图作为背景，与原有锁屏样式一致。解锁使用系统的 Hyprlock/PAM 配置。
 
 在 `~/.config/ohmyhypr/config.toml` 中调整：
 
@@ -65,7 +65,7 @@ before_sleep = true    # 睡眠前锁屏；false 关闭此项
 ```
 
 依赖 `hyprlock`、`hypridle` 和 `loginctl`。配置在 hypridle 启动时读取；修改空闲策略后，
-需在合适的时机重新启动 hypridle 或重新登录。主题颜色在每次锁屏时读取。项目生成的锁屏与空闲配置
+需在合适的时机重新启动 hypridle 或重新登录。项目生成的锁屏与空闲配置
 保存在 `$XDG_STATE_HOME/ohmyhypr/`，不修改 `~/.config/hypr`。
 
 ## 状态栏

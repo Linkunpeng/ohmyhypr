@@ -9,6 +9,7 @@ PanelWindow {
     id: bar
     required property var modelData
     screen: modelData
+    visible: !Omh.barHidden
 
     readonly property int inset: Math.max(8, Theme.gap)
     readonly property int segmentHeight: Math.max(36, Theme.barHeight)
