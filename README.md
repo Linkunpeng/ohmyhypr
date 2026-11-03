@@ -63,6 +63,7 @@ AI 配置：复制 [config/ohmyhypr.example.toml](config/ohmyhypr.example.toml) 
 | `Super+Shift+W` / `Alt+L` | 选择壁纸 / 锁屏 | ✅ |
 | `Super+Y` / `Super+Shift+Y` | 显示或隐藏形象 / 打开对话（需配置适配器） | ✅ |
 | `Super+Return` / `Q` / `F` / `T` | 终端 / 关闭 / 全屏 / 浮动 | ✅ |
+| `Super+R` | 在终端中打开 Ranger | ✅ |
 | `Super+Shift+Return` | 显示 / 收起临时终端，保留终端会话 | ✅ |
 | `Super+HJKL`（+`Shift` / `Ctrl`） | 聚焦（移动 / 调整大小） | ✅ |
 | `Super+1..0`（+`Shift`） | 切换工作区（移动窗口到工作区） | ✅ |

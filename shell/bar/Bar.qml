@@ -48,11 +48,19 @@ PanelWindow {
         id: centerSegment
         anchors.horizontalCenter: parent.horizontalCenter
         y: bar.segmentY
-        width: clock.implicitWidth + 32
+        width: centerRow.implicitWidth + 28
         height: bar.segmentHeight
-        Clock {
-            id: clock
+        RowLayout {
+            id: centerRow
             anchors.centerIn: parent
+            spacing: 10
+            Clock {}
+            Rectangle {
+                width: 1
+                height: 16
+                color: Theme.withAlpha(Theme.accent, 0.45)
+            }
+            NotificationButton { screenName: bar.screen.name }
         }
     }
 

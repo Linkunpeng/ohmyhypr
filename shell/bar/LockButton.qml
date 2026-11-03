@@ -10,7 +10,7 @@ Rectangle {
     Text {
         id: label
         anchors.centerIn: parent
-        text: "锁屏"
+        text: "Lock"
         color: Theme.fg
         font.family: Theme.font
         font.pixelSize: Theme.fontSize - 1

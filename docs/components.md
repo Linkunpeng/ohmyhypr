@@ -17,11 +17,12 @@
 | 用途 | 当前选择 | 接入方式 | 配置入口 |
 |---|---|---|---|
 | 终端 | Kitty（`kitty`） | `Super+Return` | [settings.lua](../hypr/lua/omh/settings.lua)：`terminal` |
+| 终端文件管理器 | Ranger（`ranger`） | `Super+R` 在当前配置的终端中打开 | [binds.lua](../hypr/lua/omh/binds.lua) |
 | 临时终端 | 当前终端、`jq` | `Super+Shift+Return` 显示 / 收起；浮窗居中，收起至 `special:scratchpad` | [dropdown-terminal.sh](../scripts/dropdown-terminal.sh)、[settings.lua](../hypr/lua/omh/settings.lua)：`dropdown_terminal` |
 | 文件管理器 | Thunar（`thunar`） | `Super+E` | [settings.lua](../hypr/lua/omh/settings.lua)：`files` |
 | 浏览器 | Chromium（`chromium`） | `Super+B`；不设置系统默认浏览器 | [settings.lua](../hypr/lua/omh/settings.lua)：`browser` |
 | 应用启动器 | Rofi（`rofi -show drun`） | `Super+D`；与 `Super+Space` 的 Omnibox 是两个独立入口 | [settings.lua](../hypr/lua/omh/settings.lua)：`launcher` |
-| 通知服务 | SwayNotificationCenter（`swaync`） | 非嵌套会话启动；接收桌面通知 | [autostart.lua](../hypr/lua/omh/autostart.lua) |
+| 通知服务 | ORBIT 通知中心或 SwayNotificationCenter（`swaync`） | 状态栏中间的「通知」打开现有通知中心；ORBIT 旧版本需在任务中心选择「通知」标签 | [notification-center.sh](../scripts/notification-center.sh)、[autostart.lua](../hypr/lua/omh/autostart.lua) |
 | 发送通知 | `notify-send` | Shell 用它发送通知，由通知服务显示 | [Omh.qml](../shell/services/Omh.qml) |
 | 锁屏与空闲管理 | hyprlock、hypridle、`loginctl` | `Alt+L` 锁屏；非嵌套会话按配置空闲或睡眠前锁屏 | [lockscreen.py](../brain/src/ohmyhypr/lockscreen.py)、[配置示例](../config/ohmyhypr.example.toml) |
 | 壁纸与取色 | Quickshell、`ffmpeg` | `Super+Shift+W` 选择壁纸；生成的配色同步到 Quickshell 和 Hyprland | [appearance.md](appearance.md)、[palette.py](../brain/src/ohmyhypr/palette.py) |
@@ -30,6 +31,11 @@
 | 音量 | WirePlumber（`wpctl`）及音频服务 | 音量键调用默认音频输出 | [binds.lua](../hypr/lua/omh/binds.lua) |
 | 媒体播放 | playerctl | 媒体键控制播放、上一首和下一首 | [binds.lua](../hypr/lua/omh/binds.lua) |
 | Qt 主题 | qt6ct | 设置 `QT_QPA_PLATFORMTHEME`，具体主题需在外部配置 | [env.lua](../hypr/lua/omh/env.lua) |
+
+本机 ORBIT 通知中心使用 `notifications` IPC 目标；例如
+`qs ipc -p ~/.config/quickshell call notifications closeCenter` 可收起通知浮窗。
+浮窗、通知历史和此 IPC 服务由独立的 ORBIT Quickshell 提供，不包含在本仓库；
+状态栏通知预览需要该服务支持 `notifications status`，旧版 ORBIT 或 swaync 只能打开现有面板。
 
 终端、文件管理器、浏览器和启动器可通过 gitignored 的 `hypr/lua/omh/local.lua` 覆盖；
 模板见 [local.example.lua](../hypr/lua/omh/local.example.lua)。空闲锁屏策略由 `config.toml` 的 `[lock]` 配置；其余服务目前在对应模块中直接指定。
