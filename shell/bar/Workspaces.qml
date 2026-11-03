@@ -1,69 +1,93 @@
 import QtQuick
-import QtQuick.Layouts
-import Quickshell
 import Quickshell.Hyprland
 import "../services"
+import "windowicons.js" as WindowIcons
 
-RowLayout {
+// waybar `hyprland/workspaces#rw`: workspaces of every output plus five persistent
+// ones per monitor, each labelled with its number and a glyph per window.
+Rectangle {
     id: root
+    property HyprlandMonitor monitor
 
-    property ShellScreen screen
-    readonly property HyprlandMonitor monitor: Hyprland.monitorFor(screen)
+    readonly property var ids: {
+        const base = (monitor?.id ?? 0) * 5;
+        const ids = new Set([1, 2, 3, 4, 5].map(i => base + i));
+        for (const ws of Hyprland.workspaces.values)
+            if (ws.id > 0)
+                ids.add(ws.id);
+        return [...ids].sort((a, b) => a - b);
+    }
+    readonly property var glyphs: {
+        const byWorkspace = {};
+        for (const window of Hyprland.toplevels.values) {
+            const id = window.workspace?.id ?? 0;
+            if (id <= 0)
+                continue;
+            const cls = window.wayland?.appId || window.lastIpcObject?.class || "";
+            (byWorkspace[id] = byWorkspace[id] || []).push(WindowIcons.glyphFor(cls, window.title));
+        }
+        return byWorkspace;
+    }
 
-    spacing: 4
+    implicitWidth: row.implicitWidth + 6
+    implicitHeight: BarStyle.moduleHeight
+    radius: BarStyle.radius
+    color: "transparent"
+    border.width: 2
+    border.color: BarStyle.border
+    opacity: 0.8
 
-    Repeater {
-        model: Hyprland.workspaces
+    Row {
+        id: row
+        anchors.centerIn: parent
 
-        delegate: Rectangle {
-            id: ws
+        Repeater {
+            model: root.ids
 
-            required property HyprlandWorkspace modelData
-            readonly property bool active: root.monitor?.activeWorkspace?.id === modelData.id
-            readonly property bool urgent: modelData.urgent && !active
-            readonly property bool hovered: pointer.containsMouse
+            delegate: Item {
+                id: button
+                required property int modelData
+                readonly property bool active: Hyprland.focusedWorkspace?.id === modelData
+                readonly property bool urgent: Hyprland.workspaces.values.some(ws => ws.id === modelData && ws.urgent)
+                // CSS order in waybar: :hover overrides .active padding.
+                property real padding: mouse.containsMouse ? 2 : active ? 8 : 4
 
-            visible: modelData.id > 0 && modelData.monitor === root.monitor
-            implicitWidth: active ? 28 : 18
-            implicitHeight: 18
-            radius: Theme.softCorner(height)
-            color: active ? Theme.accent
-                : urgent ? Theme.withAlpha(Theme.urgent, 0.35)
-                : hovered ? Theme.withAlpha(Theme.accent, 0.3)
-                : Theme.surface
-            border.width: active ? 0 : 1
-            border.color: urgent ? Theme.urgent : Theme.withAlpha(Theme.accent, hovered ? 0.55 : 0.18)
-            Behavior on color { ColorAnimation { duration: 200 } }
-            Behavior on border.color { ColorAnimation { duration: 200 } }
-            Behavior on implicitWidth { NumberAnimation { duration: 160; easing.type: Easing.OutCubic } }
-
-            // Soft highlight on the active chip so it reads as raised.
-            Rectangle {
-                anchors.fill: parent
-                radius: parent.radius
-                visible: ws.active
-                gradient: Gradient {
-                    GradientStop { position: 0.0; color: Qt.rgba(1, 1, 1, 0.22) }
-                    GradientStop { position: 1.0; color: Qt.rgba(1, 1, 1, 0) }
+                // GTK buttons keep a 1px margin on each side.
+                implicitWidth: label.implicitWidth + padding * 2 + 2
+                implicitHeight: BarStyle.moduleHeight - 4
+                Behavior on padding {
+                    NumberAnimation {
+                        duration: 300
+                        easing.type: Easing.BezierSpline
+                        easing.bezierCurve: [0.55, -0.68, 0.48, 1.682, 1, 1]
+                    }
                 }
-            }
 
-            Text {
-                anchors.centerIn: parent
-                text: ws.modelData.name
-                color: ws.active ? Theme.bgSolid : ws.urgent || ws.hovered ? Theme.fg : Theme.muted
-                font.family: Theme.font
-                font.pixelSize: 10
-                font.bold: ws.active
-                Behavior on color { ColorAnimation { duration: 200 } }
-            }
+                Rectangle {
+                    anchors.fill: parent
+                    anchors.leftMargin: 1
+                    anchors.rightMargin: 1
+                    radius: mouse.containsMouse ? 10 : height / 2
+                    color: "black"
+                    visible: button.active
+                }
 
-            MouseArea {
-                id: pointer
-                anchors.fill: parent
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-                onClicked: Omh.focusWorkspace(ws.modelData.id)
+                Text {
+                    id: label
+                    anchors.centerIn: parent
+                    text: button.modelData + " " + (root.glyphs[button.modelData] ?? []).join(" ")
+                    color: button.active || mouse.containsMouse ? BarStyle.gold : button.urgent ? "#11111b" : BarStyle.inactive
+                    font.family: BarStyle.font
+                    font.pixelSize: BarStyle.fontSize
+                    font.bold: true
+                }
+
+                MouseArea {
+                    id: mouse
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    onClicked: Omh.focusWorkspace(button.modelData)
+                }
             }
         }
     }

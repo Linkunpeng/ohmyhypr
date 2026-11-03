@@ -70,10 +70,26 @@ before_sleep = true    # 睡眠前锁屏；false 关闭此项
 
 ## 状态栏
 
-右侧显示 CPU 占用率、CPU 温度、内存占用百分比、当前输出音量、Wi-Fi、蓝牙和系统托盘。
-指标每 2 秒刷新，温度按 CPU 传感器名称识别；读取不到时显示「—」。静音时仍显示已设置的音量百分比。
+状态栏照搬 JaKooLit waybar 的「[TOP] Default」布局和「[Dark] Latte-Wallust combined」样式：
+三个半透明黑色圆角盒子（底边 2px 描边），JetBrainsMono Nerd Font 粗体，不做模糊。
+waybar 中取自 wallust 的两种颜色改为跟随主题：描边用 `accent`，音量用 `accent_alt`；
+其余颜色与 waybar 相同。尺寸常量见 [BarStyle.qml](../shell/services/BarStyle.qml)。
+
+| 位置 | 模块（悬停展开的抽屉在括号内） |
+|---|---|
+| 左 | cava 频谱、MPRIS 媒体（左键上一首 / 中键播放暂停 / 右键下一首）、本显示器最近的窗口标题 |
+| 中 | 启动器（主题、文件管理器、终端、浏览器、壁纸）、通知数量与新通知预览、工作区、时钟、防休眠、HINT!（快捷键指南） |
+| 右 | 托盘、网速、CPU 温度（CPU、内存、磁盘）、音量（麦克风）、电源（锁屏） |
+
+- 工作区：每个显示器固定显示 5 个（第 n 个显示器为 5n+1…5n+5），加上所有显示器上已有的工作区；
+  高亮的是当前焦点工作区。窗口图标按 waybar 的 window-rewrite 表匹配，
+  见 [windowicons.js](../shell/bar/windowicons.js)。
+- 时钟：左键切换长日期，悬停显示全年日历。
+- 网速：左键打开 Wi-Fi 菜单，右键打开蓝牙菜单。Wi-Fi 菜单使用 iwd，蓝牙菜单使用 BlueZ；
+  首次连接需要凭据的网络或配对设备会打开 Kitty 终端完成交互。
+- 音量：左键静音，滚轮调节，右键打开 pavucontrol；电源按钮打开 wlogout。
+- 启动器抽屉中的文件管理器、终端、浏览器使用 `omh.settings` 的 `files`、`terminal`、`browser`。
+- 指标每秒刷新，温度按 CPU 传感器名称识别。cava 未安装时左侧频谱不显示。
+
 托盘支持左键激活、右键菜单、中键和滚轮；只有支持系统托盘协议的应用才会显示。
 状态栏启动时会尝试恢复仍在运行、但因托盘服务切换而丢失的活动图标。
-点击 Wi-Fi 或蓝牙可打开配置菜单；首次连接需要凭据的网络或配对设备会打开 Kitty 终端完成交互。
-Wi-Fi 菜单使用 iwd，蓝牙菜单使用 BlueZ；系统服务或适配器不可用时会显示 Unavailable。
-Wi-Fi 和蓝牙图标使用 JetBrainsMono Nerd Font 的 Material 字形：Wi-Fi 按信号强度显示格数，蓝牙区分关闭 / 开启 / 已连接，颜色跟随主题。

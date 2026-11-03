@@ -13,6 +13,8 @@ Singleton {
     property bool themePickerOpen: false
     property bool wallpaperPickerOpen: false
     property bool barHidden: false
+    property bool shortcutGuideOpen: false
+    property bool idleInhibited: false
     property string wallpaperTargetScreen: ""
 
     function toggleWallpaperPicker(): void {
@@ -34,6 +36,11 @@ Singleton {
 
     function focusWorkspace(id: int): void {
         dispatch("hl.dsp.focus({ workspace = " + id + " })");
+    }
+
+    // Starts an app named in omh.settings (terminal, files, browser, ...).
+    function launch(setting: string): void {
+        dispatch("hl.dsp.exec_cmd(OHMYHYPR_SETTINGS." + setting + ")");
     }
 
     function run(args: list<string>): void {

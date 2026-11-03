@@ -50,5 +50,6 @@ omh theme apply <id>
 | `porcelain` | 浅色、底部 bar |
 
 
-状态栏使用左、中、右三段独立悬浮布局，段间透明区域可点击下方窗口。
-位置由 `[shape] bar_position` 控制；`bar` 为旧主题兼容字段，现有主题统一使用三段布局。
+状态栏使用左、中、右三段独立悬浮布局，段间透明区域可点击下方窗口，样式固定为 waybar 风格
+（见 [外观](appearance.md#状态栏)）。主题只影响它的位置（`[shape] bar_position`）、描边色（`accent`）
+和音量色（`accent_alt`）；`bar`、`bar_height`、`bar_opacity`、`widget` 不再作用于状态栏。

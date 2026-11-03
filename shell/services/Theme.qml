@@ -41,8 +41,6 @@ Singleton {
     Behavior on accentAlt { ColorAnimation { duration: 450 } }
 
     readonly property int radius: shape.radius ?? 12
-    readonly property int widgetRadius: shape.widget_radius ?? 999
-    readonly property int barHeight: shape.bar_height ?? 34
     readonly property bool barFloating: (shape.bar ?? "floating") === "floating"
     readonly property bool barBottom: (shape.bar_position ?? "top") === "bottom"
     readonly property int gap: shape.gaps_out ?? 10
@@ -54,16 +52,6 @@ Singleton {
     function withAlpha(c: string, a: real): color {
         const q = Qt.color(c);
         return Qt.rgba(q.r, q.g, q.b, a);
-    }
-
-    // Corner radius for a widget of the given height (pill = fully round).
-    function widgetCorner(height: real): real {
-        return Math.min(widgetRadius, height / 2);
-    }
-
-    // Like widgetCorner, but never square: small chips stay soft in square themes.
-    function softCorner(height: real): real {
-        return Math.max(widgetCorner(height), Math.round(height * 0.32));
     }
 
     FileView {

@@ -22,9 +22,9 @@
 | 文件管理器 | Thunar（`thunar`） | `Super+E` | [settings.lua](../hypr/lua/omh/settings.lua)：`files` |
 | 浏览器 | Chromium（`chromium`） | `Super+B`；不设置系统默认浏览器 | [settings.lua](../hypr/lua/omh/settings.lua)：`browser` |
 | 应用启动器 | Rofi（`rofi -show drun`） | `Super+D`；与 `Super+Space` 的 Omnibox 是两个独立入口 | [settings.lua](../hypr/lua/omh/settings.lua)：`launcher` |
-| 通知服务 | Quickshell | 状态栏中间的 Notifications 打开通知历史；新通知在状态栏短暂显示预览 | [NotificationStore.qml](../shell/services/NotificationStore.qml)、[NotificationCenter.qml](../shell/notifications/NotificationCenter.qml) |
-| Wi-Fi | iwd、`busctl`、`iwctl` | 状态栏显示连接状态；点击可开关、扫描和连接网络 | [connectivity.py](../brain/src/ohmyhypr/connectivity.py) |
-| 蓝牙 | BlueZ、`busctl`、`bluetoothctl` | 状态栏显示连接状态；点击可开关、扫描和管理设备 | [connectivity.py](../brain/src/ohmyhypr/connectivity.py) |
+| 通知服务 | Quickshell | 状态栏中间的铃铛显示数量，点击打开通知历史，右键清空；新通知在铃铛旁短暂显示预览 | [NotificationStore.qml](../shell/services/NotificationStore.qml)、[NotificationCenter.qml](../shell/notifications/NotificationCenter.qml) |
+| Wi-Fi | iwd、`busctl`、`iwctl` | 状态栏网速模块显示连接类型和信号；左键可开关、扫描和连接网络 | [connectivity.py](../brain/src/ohmyhypr/connectivity.py) |
+| 蓝牙 | BlueZ、`busctl`、`bluetoothctl` | 右键状态栏网速模块可开关、扫描和管理设备 | [connectivity.py](../brain/src/ohmyhypr/connectivity.py) |
 | 发送通知 | `notify-send` | Shell 用它发送通知，由通知服务显示 | [Omh.qml](../shell/services/Omh.qml) |
 | 锁屏与空闲管理 | hyprlock、hypridle、`loginctl` | `Alt+L` 锁屏；非嵌套会话按配置空闲或睡眠前锁屏 | [lockscreen.py](../brain/src/ohmyhypr/lockscreen.py)、[配置示例](../config/ohmyhypr.example.toml) |
 | 壁纸与取色 | Quickshell、`ffmpeg` | `Super+Shift+W` 选择壁纸；生成的配色同步到 Quickshell 和 Hyprland | [appearance.md](appearance.md)、[palette.py](../brain/src/ohmyhypr/palette.py) |
@@ -57,4 +57,6 @@
 - 添加或替换组件时，记录用途、实际调用方式、配置位置以及是否已实现；需要自动检查的依赖应同时更新 [doctor.py](../brain/src/ohmyhypr/doctor.py)。
 
 状态栏右侧使用 Quickshell SystemTray/DBusMenu 显示后台应用。系统指标通过
-[metrics.py](../brain/src/ohmyhypr/metrics.py) 读取 `/proc`、CPU hwmon 和 `wpctl`，每 2 秒刷新。
+[metrics.py](../brain/src/ohmyhypr/metrics.py) 读取 `/proc`、`/sys`（CPU hwmon、默认路由网卡流量）
+和根分区用量，每秒刷新；音量和媒体直接使用 Quickshell 的 PipeWire 和 MPRIS 服务。
+状态栏还会调用 `cava`（频谱）、`wpctl`、`pavucontrol` 和 `wlogout`，缺失时对应功能不可用。

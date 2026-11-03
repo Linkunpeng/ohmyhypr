@@ -34,7 +34,7 @@ Vision and plan: `docs/brainstorm.md`, `docs/architecture.md`, `docs/roadmap.md`
 
 - Lua ⇄ QML entry points: `hl.dsp.global("ohmyhypr:<name>")` ⇄
   `GlobalShortcut { appid: "ohmyhypr"; name: "<name>" }`.
-- Quickshell layer namespaces start with `omh-` (a layer rule blurs them).
+- Quickshell layer namespaces start with `omh-` (a layer rule blurs panels; the bar is unblurred).
 - Brain is stdlib-only for now; `default-groups = []` keeps `uv run` offline-capable
   (PyPI may be unreachable without the proxy).
 

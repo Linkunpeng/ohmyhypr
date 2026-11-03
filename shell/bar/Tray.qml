@@ -6,26 +6,27 @@ import Quickshell.Services.SystemTray
 import Quickshell.Widgets
 import "../services"
 
+// waybar tray: 20px icons, 4px apart, module padding on both sides.
 Item {
     id: root
     readonly property int itemCount: icons.count
-    implicitWidth: row.implicitWidth
-    implicitHeight: 28
+    visible: itemCount > 0
+    implicitWidth: row.implicitWidth + BarStyle.padding * 2
+    implicitHeight: BarStyle.moduleHeight
     Component.onCompleted: TrayRecovery.schedule()
 
     Row {
         id: row
-        spacing: 6
+        anchors.centerIn: parent
+        spacing: 4
         Repeater {
             id: icons
             model: SystemTray.items
-            delegate: Rectangle {
+            delegate: Item {
                 id: entry
                 required property var modelData
-                width: 28
-                height: 28
-                radius: Theme.widgetCorner(height)
-                color: mouse.containsMouse ? Theme.withAlpha(Theme.accent, 0.25) : "transparent"
+                width: 20
+                height: 20
                 ToolTip.visible: mouse.containsMouse && !menu.visible
                 ToolTip.delay: 600
                 ToolTip.text: modelData.tooltipTitle || modelData.title || modelData.id
@@ -40,9 +41,10 @@ Item {
                     anchors.centerIn: parent
                     visible: icon.status === Image.Error || icon.status === Image.Null
                     text: (entry.modelData.title || entry.modelData.id || "?").slice(0, 1).toUpperCase()
-                    color: Theme.fg
-                    font.family: Theme.font
-                    font.pixelSize: Theme.fontSize
+                    color: BarStyle.text
+                    font.family: BarStyle.font
+                    font.pixelSize: BarStyle.fontSize
+                    font.bold: true
                 }
                 MouseArea {
                     id: mouse

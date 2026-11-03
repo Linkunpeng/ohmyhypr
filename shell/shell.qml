@@ -56,7 +56,7 @@ ShellRoot {
 
     WallpaperPicker {}
 
-    ShortcutGuide { id: shortcutGuide }
+    ShortcutGuide {}
 
     GlobalShortcut {
         appid: "ohmyhypr"
@@ -69,7 +69,7 @@ ShellRoot {
         appid: "ohmyhypr"
         name: "shortcuts"
         description: "Shortcut guide"
-        onPressed: shortcutGuide.open = !shortcutGuide.open
+        onPressed: Omh.shortcutGuideOpen = !Omh.shortcutGuideOpen
     }
 
     GlobalShortcut {

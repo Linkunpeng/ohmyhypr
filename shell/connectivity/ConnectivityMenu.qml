@@ -13,7 +13,8 @@ PanelWindow {
     screen: modelData
     visible: Connectivity.openMenu !== "" && (Connectivity.targetScreen ? modelData.name === Connectivity.targetScreen : modelData === Quickshell.screens[0])
     anchors { top: !Theme.barBottom; bottom: Theme.barBottom; right: true }
-    margins { top: !Theme.barBottom ? Math.max(36, Theme.barHeight) + Math.max(8, Theme.gap) + 8 : 0; bottom: Theme.barBottom ? Math.max(36, Theme.barHeight) + Math.max(8, Theme.gap) + 8 : 0; right: Math.max(8, Theme.gap) }
+    readonly property int barOffset: BarStyle.marginTop + BarStyle.boxHeight + 8
+    margins { top: !Theme.barBottom ? barOffset : 0; bottom: Theme.barBottom ? barOffset : 0; right: BarStyle.marginSide }
     implicitWidth: Math.min(400, screen ? screen.width - 24 : 400)
     implicitHeight: Math.min(490, screen ? screen.height - 90 : 490)
     exclusionMode: ExclusionMode.Ignore

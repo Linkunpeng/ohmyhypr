@@ -123,7 +123,7 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("lock", help="lock the session with hyprlock")
     sub.add_parser("idle", help="run hypridle using the configured lock policy")
 
-    sub.add_parser("metrics", help="local CPU, memory, temperature and volume counters").add_argument("--watch", action="store_true")
+    sub.add_parser("metrics", help="local CPU, memory, disk, temperature and network counters").add_argument("--watch", action="store_true")
     sub.add_parser("tray", help="recover active system tray items after the watcher starts")
 
     p_connectivity = sub.add_parser("connectivity", help="inspect or configure Wi-Fi and Bluetooth")

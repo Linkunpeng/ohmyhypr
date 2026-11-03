@@ -15,6 +15,8 @@ OHMYHYPR_ROOT = ROOT
 package.path = ROOT .. "lua/?.lua;" .. ROOT .. "lua/?/init.lua;" .. package.path
 
 local s = require("omh.settings")(ROOT)
+-- The bar launches s.terminal / s.files / s.browser through `hyprctl dispatch`.
+OHMYHYPR_SETTINGS = s
 
 for _, name in ipairs({ "env", "monitors", "look", "input", "rules", "binds", "ai", "autostart" }) do
 	require("omh." .. name)(s)

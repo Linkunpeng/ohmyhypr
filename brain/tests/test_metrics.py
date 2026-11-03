@@ -21,7 +21,7 @@ class MetricsTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             path = Path(temp) / 'meminfo'
             path.write_text('MemTotal: 1000 kB\nMemFree: 10 kB\nMemAvailable: 750 kB\n')
-            self.assertEqual(metrics.memory_percent(path), 25)
+            self.assertEqual(metrics.memory_usage(path)[0], 25)
 
     def test_temperature_uses_cpu_sensor_not_gpu(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -33,10 +33,25 @@ class MetricsTests(unittest.TestCase):
                 (sensor / 'temp1_input').write_text(str(value))
             self.assertEqual(metrics.cpu_temperature(root), 47)
 
-    def test_muted_volume_keeps_stored_percentage(self):
-        self.assertEqual(metrics.parse_volume('Volume: 0.40 [MUTED]'), (40, True))
-        self.assertEqual(metrics.parse_volume('Volume: 1.25'), (125, False))
-        self.assertEqual(metrics.parse_volume('no sink'), (None, False))
+    def test_memory_usage_reports_gib(self):
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / 'meminfo'
+            path.write_text('MemTotal: 16777216 kB\nMemAvailable: 12582912 kB\n')
+            self.assertEqual(metrics.memory_usage(path), (25, 4.0))
+
+    def test_default_interface_prefers_lowest_metric(self):
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / 'route'
+            path.write_text('Iface\tDestination\tGateway\tFlags\tRefCnt\tUse\tMetric\n'
+                            'wlan0\t00000000\t0101A8C0\t0003\t0\t0\t600\n'
+                            'eth0\t00000000\t0101A8C0\t0003\t0\t0\t100\n'
+                            'wg0\t0000000A\t00000000\t0001\t0\t0\t0\n')
+            self.assertEqual(metrics.default_interface(path), 'eth0')
+
+    def test_net_rates_per_second_and_counter_reset(self):
+        self.assertEqual(metrics.net_rates((1000, 5000), (3000, 9000), 2), (1000, 2000))
+        self.assertIsNone(metrics.net_rates((3000, 9000), (10, 10), 1))
+        self.assertIsNone(metrics.net_rates(None, (10, 10), 1))
 
 
 if __name__ == '__main__':

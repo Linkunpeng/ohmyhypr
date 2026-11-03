@@ -9,7 +9,7 @@ import "../services"
 
 PanelWindow {
     id: root
-    property bool open: false
+    readonly property bool open: Omh.shortcutGuideOpen
     property var bindings: []
     property string selectedGroup: "桌面"
     readonly property var groups: {
@@ -84,7 +84,7 @@ PanelWindow {
         }
     }
 
-    MouseArea { anchors.fill: parent; onClicked: root.open = false }
+    MouseArea { anchors.fill: parent; onClicked: Omh.shortcutGuideOpen = false }
 
     Rectangle {
         anchors.centerIn: parent
@@ -160,7 +160,7 @@ PanelWindow {
                 clip: true
                 boundsBehavior: Flickable.StopAtBounds
                 focus: true
-                Keys.onEscapePressed: root.open = false
+                Keys.onEscapePressed: Omh.shortcutGuideOpen = false
                 ScrollBar.vertical: ScrollBar { policy: ScrollBar.AsNeeded }
 
                 Column {

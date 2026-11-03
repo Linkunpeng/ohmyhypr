@@ -2,52 +2,43 @@ import QtQuick
 import QtQuick.Shapes
 import "../services"
 
-Rectangle {
+// waybar `.modules-left/center/right`: half-transparent black box with 15px corners
+// and a 2px bottom border that thins out around the lower corners.
+Item {
     id: segment
-    property real borderAngle: 0
-    readonly property color borderAccent: complement(Theme.accent)
-    readonly property color borderAccentAlt: complement(Theme.accentAlt)
-
-    function complement(c: color): color {
-        const hue = c.hsvHue < 0 ? 0 : c.hsvHue;
-        return Qt.hsva((hue + 0.5) % 1, Math.min(c.hsvSaturation, 0.24), Math.min(c.hsvValue * 1.1, 1), 1);
-    }
-
-    radius: height / 2
-    // The wallpaper palette raises opacity only as needed for readable text.
-    color: Qt.rgba(Theme.bgSolid.r, Theme.bgSolid.g, Theme.bgSolid.b, Theme.palette.bar_opacity ?? 0.2)
-
-    // Glass sheen: a faint highlight fading out over the top half.
-    Rectangle {
-        anchors.fill: parent
-        radius: segment.radius
-        gradient: Gradient {
-            GradientStop { position: 0.0; color: Qt.rgba(1, 1, 1, Theme.dark ? 0.07 : 0.18) }
-            GradientStop { position: 0.55; color: Qt.rgba(1, 1, 1, 0) }
-        }
-    }
+    default property alias content: row.data
+    implicitWidth: row.implicitWidth + 8
+    implicitHeight: BarStyle.boxHeight
 
     Shape {
         anchors.fill: parent
-        antialiasing: true
         preferredRendererType: Shape.CurveRenderer
-        z: 1
         ShapePath {
             strokeWidth: -1
-            fillRule: ShapePath.OddEvenFill
-            fillGradient: ConicalGradient {
-                centerX: segment.width / 2
-                centerY: segment.height / 2
-                angle: segment.borderAngle
-                GradientStop { position: 0.0; color: Theme.withAlpha(segment.borderAccent, 0.4) }
-                GradientStop { position: 0.12; color: Theme.withAlpha(Qt.lighter(segment.borderAccent, 1.25), 0.85) }
-                GradientStop { position: 0.26; color: Theme.withAlpha(segment.borderAccentAlt, 0.55) }
-                GradientStop { position: 0.55; color: Theme.withAlpha(segment.borderAccent, 0.4) }
-                GradientStop { position: 0.78; color: Theme.withAlpha(segment.borderAccentAlt, 0.55) }
-                GradientStop { position: 1.0; color: Theme.withAlpha(segment.borderAccent, 0.4) }
-            }
-            PathRectangle { x: 0; y: 0; width: segment.width; height: segment.height; radius: segment.radius }
-            PathRectangle { x: 1; y: 1; width: Math.max(0, segment.width - 2); height: Math.max(0, segment.height - 2); radius: Math.max(0, segment.radius - 1) }
+            fillColor: BarStyle.background
+            PathRectangle { width: segment.width; height: segment.height; radius: BarStyle.radius }
         }
+        ShapePath {
+            id: border
+            readonly property real w: segment.width
+            readonly property real h: segment.height
+            readonly property int r: BarStyle.radius
+            strokeWidth: -1
+            fillColor: BarStyle.border
+            // Outer bottom corners (r) minus the padding box's corners (r - 2, raised by 2).
+            PathSvg {
+                path: `M 0 ${border.h - border.r} A ${border.r} ${border.r} 0 0 0 ${border.r} ${border.h}`
+                    + ` L ${border.w - border.r} ${border.h} A ${border.r} ${border.r} 0 0 0 ${border.w} ${border.h - border.r}`
+                    + ` A ${border.r - 2} ${border.r - 2} 0 0 1 ${border.w - border.r + 2} ${border.h - 2}`
+                    + ` L ${border.r - 2} ${border.h - 2} A ${border.r - 2} ${border.r - 2} 0 0 1 0 ${border.h - border.r} Z`
+            }
+        }
+    }
+
+    Row {
+        id: row
+        x: 4
+        y: 2
+        spacing: BarStyle.spacing
     }
 }

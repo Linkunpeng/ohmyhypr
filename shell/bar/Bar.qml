@@ -1,28 +1,15 @@
 import QtQuick
-import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
 import "../services"
 
-// Three independent segments; transparent gaps pass pointer input through.
+// Layer-shell host for BarContent; the transparent space between its three
+// boxes passes pointer input through.
 PanelWindow {
     id: bar
     required property var modelData
     screen: modelData
     visible: !Omh.barHidden
-
-    readonly property int inset: Math.max(8, Theme.gap)
-    readonly property int segmentHeight: Math.max(36, Theme.barHeight)
-    readonly property int segmentY: Theme.barBottom ? 0 : inset
-    property real borderAngle: 0
-
-    NumberAnimation on borderAngle {
-        from: 0
-        to: 360
-        duration: 12000
-        loops: Animation.Infinite
-        running: bar.visible
-    }
 
     anchors {
         top: !Theme.barBottom
@@ -30,64 +17,24 @@ PanelWindow {
         left: true
         right: true
     }
-    implicitHeight: segmentHeight + inset
+    implicitHeight: BarStyle.marginTop + BarStyle.boxHeight
     exclusiveZone: implicitHeight
     color: "transparent"
     WlrLayershell.namespace: "omh-bar"
     mask: Region {
-        item: leftSegment
-        Region { item: centerSegment }
-        Region { item: rightSegment }
+        item: content.leftBox
+        Region { item: content.centerBox }
+        Region { item: content.rightBox }
     }
 
-    BarSegment {
-        id: leftSegment
-        borderAngle: bar.borderAngle
-        x: bar.inset
-        y: bar.segmentY
-        width: workspaces.implicitWidth + 28
-        height: bar.segmentHeight
-        Workspaces {
-            id: workspaces
-            anchors.centerIn: parent
-            screen: bar.screen
-        }
+    IdleInhibitor {
+        window: bar
+        enabled: Omh.idleInhibited
     }
 
-    BarSegment {
-        id: centerSegment
-        borderAngle: bar.borderAngle
-        anchors.horizontalCenter: parent.horizontalCenter
-        y: bar.segmentY
-        width: centerRow.implicitWidth + 28
-        height: bar.segmentHeight
-        RowLayout {
-            id: centerRow
-            anchors.centerIn: parent
-            spacing: 10
-            Clock {}
-            Separator {}
-            NotificationButton { screenName: bar.screen.name }
-        }
-    }
-
-    BarSegment {
-        id: rightSegment
-        borderAngle: bar.borderAngle
-        anchors.right: parent.right
-        anchors.rightMargin: bar.inset
-        y: bar.segmentY
-        width: statusRow.implicitWidth + 28
-        height: bar.segmentHeight
-        RowLayout {
-            id: statusRow
-            anchors.centerIn: parent
-            spacing: 16
-            SystemStatus {}
-            ConnectivityButton { kind: "wifi"; screenName: bar.screen.name }
-            ConnectivityButton { kind: "bluetooth"; screenName: bar.screen.name }
-            Separator { visible: tray.itemCount > 0 }
-            Tray { id: tray }
-        }
+    BarContent {
+        id: content
+        anchors.fill: parent
+        screen: bar.screen
     }
 }
