@@ -45,9 +45,6 @@ omh theme apply <id>
 | 主题 | 风格 |
 |---|---|
 | `moonlantern` | 月灯（默认）：墨绿青灰、大圆角窗口、非焦点窗口半透明、贴边 bar |
-| `sandrone` | 木偶：黄铜与绯红、直角控件、贴边 bar |
-| `midnight` | 冷色玻璃、悬浮胶囊 bar |
-| `porcelain` | 浅色、底部 bar |
 
 
 状态栏使用左、中、右三段独立悬浮布局，段间透明区域可点击下方窗口，样式固定为 waybar 风格

@@ -48,9 +48,13 @@ class AppearanceTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         root = Path(self.tmp.name)
+        fixture = root / "config" / "themes" / "test-theme" / "theme.toml"
+        fixture.parent.mkdir(parents=True)
+        fixture.write_text('[meta]\nname = "Test theme"\n[wallpaper]\npath = ""\n')
         self.patches = [patch.object(paths, "STATE", root), patch.object(paths, "THEME_JSON", root / "theme.json"),
                         patch.object(paths, "THEME_LUA", root / "theme.lua"),
                         patch.object(paths, "PALETTE_JSON", root / "palette.json"),
+                        patch.object(paths, "CONFIG", root / "config"),
                         patch.object(theme, "in_ohmyhypr_session", return_value=False)]
         for item in self.patches:
             item.start()
@@ -64,7 +68,7 @@ class AppearanceTests(unittest.TestCase):
 
     @unittest.skipUnless(shutil.which("ffmpeg"), "ffmpeg required")
     def test_wallpaper_changes_shared_palette_and_preserves_shape(self):
-        self.assertEqual(theme.apply("midnight")["theme"], "midnight")
+        self.assertEqual(theme.apply("test-theme")["theme"], "test-theme")
         before = theme.current()
         report = wallpaper.set_wallpaper(self.image.as_uri())
         after = theme.current()
@@ -84,7 +88,7 @@ class AppearanceTests(unittest.TestCase):
         self.assertIn("blur_size = 8", config)
 
     def test_failed_extraction_preserves_existing_state(self):
-        theme.apply("midnight")
+        theme.apply("test-theme")
         old = {p: p.read_bytes() for p in (paths.THEME_JSON, paths.THEME_LUA, paths.PALETTE_JSON)}
         with patch.object(palette, "extract", side_effect=palette.PaletteError("bad image")):
             with self.assertRaises(wallpaper.WallpaperError):
@@ -92,7 +96,7 @@ class AppearanceTests(unittest.TestCase):
         self.assertEqual(old, {p: p.read_bytes() for p in old})
 
     def test_palette_can_be_applied_without_changing_wallpaper_or_shape(self):
-        theme.apply("midnight")
+        theme.apply("test-theme")
         before = theme.current()
         colors = palette.from_pixels(bytes([30, 170, 60] * 30))
         file = paths.STATE / "colors.json"
@@ -110,7 +114,7 @@ class AppearanceTests(unittest.TestCase):
             wallpaper.image_path("file://other-host/tmp/image.png")
 
     def test_target_screen_keeps_other_screens_wallpaper(self):
-        theme.apply("midnight")
+        theme.apply("test-theme")
         before = theme.current()["wallpaper"]
         colors = palette.from_pixels(bytes([20, 100, 180] * 20))
         with patch.object(wallpaper, "monitors", return_value=[{"name": "screen-a", "focused": True}, {"name": "screen-b"}]), \
@@ -135,11 +139,11 @@ class AppearanceTests(unittest.TestCase):
         self.assertIn("%23", result["items"][0]["url"])
 
     def test_theme_palette_fallback_when_extraction_fails(self):
-        resolved = theme.resolve("midnight")
+        resolved = theme.resolve("test-theme")
         resolved["wallpaper"]["path"] = str(self.image)
         with patch.object(theme, "resolve", return_value=resolved), \
              patch.object(palette, "extract", side_effect=palette.PaletteError("ffmpeg unavailable")):
-            result = theme.apply("midnight")
+            result = theme.apply("test-theme")
         self.assertIn("theme colors", result["warning"])
         self.assertEqual(json.loads(paths.PALETTE_JSON.read_text())["source"], "theme")
 

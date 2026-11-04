@@ -1,7 +1,8 @@
 # 组件表
 
 此表记录项目当前选择的组件、用途和配置入口。它描述仓库配置，不代表本机已安装或服务正在运行；
-部署到不同机器时，可用 `make doctor` 检查其覆盖的依赖。替换组件时，同步更新配置、此表和相关文档。
+部署到不同机器时，可用 `make doctor` 检查其覆盖的依赖。完整分类和功能链路见 [依赖清单](dependencies.md)。
+替换组件时，同步更新配置、此表和依赖清单。
 
 ## 核心运行组件
 
@@ -59,4 +60,4 @@
 状态栏右侧使用 Quickshell SystemTray/DBusMenu 显示后台应用。系统指标通过
 [metrics.py](../brain/src/ohmyhypr/metrics.py) 读取 `/proc`、`/sys`（CPU hwmon、默认路由网卡流量）
 和根分区用量，每秒刷新；音量和媒体直接使用 Quickshell 的 PipeWire 和 MPRIS 服务。
-状态栏还会调用 `cava`（频谱）、`wpctl`、`pavucontrol` 和 `wlogout`，缺失时对应功能不可用。
+状态栏还会调用 `cava`（频谱）、`wpctl` 和 `pavucontrol`，缺失时对应功能不可用；GPU 指标读取 AMD 驱动的 sysfs。

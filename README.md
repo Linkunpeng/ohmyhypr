@@ -72,6 +72,7 @@ AI 配置：复制 [config/ohmyhypr.example.toml](config/ohmyhypr.example.toml) 
 ## 文档
 
 - [组件表](docs/components.md)：依赖、用途、启动方式与配置入口
+- [依赖清单与功能链路](docs/dependencies.md)：按基础、功能和开发分类，说明缺失影响及调用关系
 - [头脑风暴](docs/brainstorm.md)：愿景、触点、能力、选型、风险
 - [架构](docs/architecture.md)：分层、约定、数据流
 - [Roadmap](docs/roadmap.md)：M0–M5

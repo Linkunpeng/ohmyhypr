@@ -37,6 +37,8 @@ Vision and plan: `docs/brainstorm.md`, `docs/architecture.md`, `docs/roadmap.md`
 - Quickshell layer namespaces start with `omh-` (a layer rule blurs panels; the bar is unblurred).
 - Brain is stdlib-only for now; `default-groups = []` keeps `uv run` offline-capable
   (PyPI may be unreachable without the proxy).
+- When changing external dependencies or their usage, update `docs/dependencies.md`
+  and `docs/components.md`; update `doctor.py` as appropriate.
 
 ## Live system — be careful
 
