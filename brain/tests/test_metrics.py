@@ -53,6 +53,21 @@ class MetricsTests(unittest.TestCase):
         self.assertIsNone(metrics.net_rates((3000, 9000), (10, 10), 1))
         self.assertIsNone(metrics.net_rates(None, (10, 10), 1))
 
+    def test_gpu_selects_largest_vram_and_handles_missing_busy(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            for card, total, used, busy in [('card0', 200, 100, '9'), ('card1', 1600, 400, '73')]:
+                device = root / card / 'device'
+                device.mkdir(parents=True)
+                (device / 'mem_info_vram_total').write_text(str(total))
+                (device / 'mem_info_vram_used').write_text(str(used))
+                (device / 'gpu_busy_percent').write_text(busy)
+            self.assertEqual(metrics.gpu_usage(root), (73, 25))
+            (root / 'card1/device/gpu_busy_percent').unlink()
+            self.assertEqual(metrics.gpu_usage(root), (None, 25))
+            (root / 'card1/device/mem_info_vram_used').unlink()
+            self.assertEqual(metrics.gpu_usage(root), (None, None))
+
 
 if __name__ == '__main__':
     unittest.main()

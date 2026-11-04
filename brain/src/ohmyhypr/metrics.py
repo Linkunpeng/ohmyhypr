@@ -89,6 +89,35 @@ def cpu_temperature(root: Path = Path('/sys/class/hwmon')) -> int | None:
     return round(max(readings)) if readings else None
 
 
+def gpu_usage(root: Path = Path('/sys/class/drm')) -> tuple[int | None, int | None] | None:
+    """AMD GPU utilization and VRAM percent, preferring the largest VRAM pool."""
+    devices = []
+    for card in root.glob('card[0-9]*'):
+        if not card.name[4:].isdigit():
+            continue
+        device = card / 'device'
+        try:
+            total = int((device / 'mem_info_vram_total').read_text())
+            if total <= 0:
+                continue
+        except (OSError, ValueError):
+            continue
+        devices.append((total, card.name, device))
+    if not devices:
+        return None
+    total, _, device = max(devices, key=lambda item: (item[0], item[1]))
+    try:
+        busy = max(0, min(100, int((device / 'gpu_busy_percent').read_text())))
+    except (OSError, ValueError):
+        busy = None
+    try:
+        used = int((device / 'mem_info_vram_used').read_text())
+        vram = round(max(0, min(100, 100 * used / total)))
+    except (OSError, ValueError):
+        vram = None
+    return busy, vram
+
+
 def run(watch: bool = False) -> int:
     previous = cpu_times()
     iface = default_interface()
@@ -98,6 +127,7 @@ def run(watch: bool = False) -> int:
             time.sleep(1 if watch else 0.2)
             current = cpu_times()
             memory = memory_usage()
+            gpu = gpu_usage()
             now, current_iface = time.monotonic(), default_interface()
             counters = net_counters(current_iface)
             rates = net_rates(traffic, counters, now - stamp) if current_iface == iface else None
@@ -105,7 +135,8 @@ def run(watch: bool = False) -> int:
                    'up': rates[0] if rates else 0, 'down': rates[1] if rates else 0} if current_iface else None
             print(json.dumps({'cpu': cpu_percent(previous, current), 'memory': memory[0] if memory else None,
                               'memory_gib': memory[1] if memory else None, 'disk': disk_percent(),
-                              'temperature': cpu_temperature(), 'net': net}), flush=True)
+                              'temperature': cpu_temperature(), 'net': net,
+                              'gpu': gpu[0] if gpu else None, 'vram': gpu[1] if gpu else None}), flush=True)
             previous, iface, traffic, stamp = current, current_iface, counters, now
             if not watch:
                 return 0

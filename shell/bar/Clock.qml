@@ -2,7 +2,7 @@ import QtQuick
 import Quickshell
 import "../services"
 
-// waybar clock: sapphire HH:mm:ss in a bordered pill; click for the long date,
+// Clock in a bordered pill; click for the long date,
 // hover for the year calendar.
 Rectangle {
     id: root
@@ -24,7 +24,7 @@ Rectangle {
     Module {
         id: label
         anchors.centerIn: parent
-        color: BarStyle.sapphire
+        color: "#ffffff"
         text: "\uf017 " + (root.alt
             ? Qt.formatDateTime(clock.date, "HH:mm") + "  \uf073 " + Qt.locale().toString(clock.date, "yyyy, dd MMMM, dddd")
             : Qt.formatDateTime(clock.date, "HH:mm:ss"))

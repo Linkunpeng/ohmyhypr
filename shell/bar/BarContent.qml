@@ -17,6 +17,7 @@ Item {
         id: leftBox
         x: BarStyle.marginSide
         y: root.boxY
+        Workspaces { monitor: root.monitor }
         Module { text: Cava.bars }
         Media {}
         Separator { text: "  " }
@@ -28,10 +29,8 @@ Item {
         // Centered like waybar's fixed-center, but pushed aside instead of overlapping.
         x: Math.max(leftBox.x + leftBox.width, Math.min(Math.round((root.width - width) / 2), rightBox.x - width))
         y: root.boxY
-        AppDrawer {}
         Notifications { screenName: root.screen.name }
         Separator {}
-        Workspaces { monitor: root.monitor }
         Clock {}
         Separator {}
         Module {
@@ -39,11 +38,6 @@ Item {
             color: Omh.idleInhibited ? BarStyle.neon : BarStyle.teal
             tooltip: Omh.idleInhibited ? "Idle_inhibitor active" : "Idle_inhibitor not active"
             onClicked: Omh.idleInhibited = !Omh.idleInhibited
-        }
-        Module {
-            text: "󰺁 HINT!"
-            tooltip: "Left Click: Keybinds"
-            onClicked: Omh.shortcutGuideOpen = !Omh.shortcutGuideOpen
         }
     }
 
@@ -59,6 +53,6 @@ Item {
         Separator { text: "|" }
         Audio {}
         Separator {}
-        Power {}
+        Gpu {}
     }
 }
